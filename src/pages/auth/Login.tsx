@@ -12,7 +12,7 @@ function Login() {
           <img
             src={Banner}
             alt="Food Recipe"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="inset-0 h-full w-full object-cover"
           />
         </div>
       </main>
