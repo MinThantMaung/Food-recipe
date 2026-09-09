@@ -1,21 +1,11 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "../Icon";
-import { useNavigate } from "react-router-dom";
+import { Form } from "react-router-dom";
 
 export function ConfirmPasswordForm() {
-  const navigate = useNavigate();
-  const handleConfirm = () => {
-    navigate("/");
-  };
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -27,7 +17,7 @@ export function ConfirmPasswordForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
+        <Form method="post">
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
@@ -47,18 +37,15 @@ export function ConfirmPasswordForm() {
                 required
               />
             </div>
+            <Button
+              type="submit"
+              className="w-full bg-orange-500 cursor-pointer"
+            >
+              Register
+            </Button>
           </div>
-        </form>
+        </Form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button
-          type="submit"
-          className="w-full bg-orange-500 cursor-pointer"
-          onClick={handleConfirm}
-        >
-          Register
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
