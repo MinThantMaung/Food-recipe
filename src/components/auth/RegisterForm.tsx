@@ -1,21 +1,11 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "../Icon";
-import { Link, useNavigate } from "react-router-dom";
+import { Form } from "react-router-dom";
 
 export function RegisterForm() {
-  const navigate = useNavigate();
-  const handleRegister = () => {
-    navigate("/verify-otp");
-  };
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -27,7 +17,7 @@ export function RegisterForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form>
+        <Form method="post">
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
@@ -38,24 +28,15 @@ export function RegisterForm() {
                 required
               />
             </div>
+            <Button
+              type="submit"
+              className="w-full bg-orange-500 cursor-pointer"
+            >
+              Register
+            </Button>
           </div>
-        </form>
+        </Form>
       </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button
-          type="submit"
-          className="w-full bg-orange-500 cursor-pointer"
-          onClick={handleRegister}
-        >
-          Register
-        </Button>
-        <div>
-          <span className="text-xs">Already have an account?</span>
-          <Link to="/login" className="underline text-orange-500 text-xs">
-            Sign in
-          </Link>
-        </div>
-      </CardFooter>
     </Card>
   );
 }
