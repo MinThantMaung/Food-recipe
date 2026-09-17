@@ -8,6 +8,7 @@ import RegisterPage from "./pages/auth/Register.tsx"
 import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
 import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
 import { confirmPasswordAction, registerAction, verifyOtpAction } from "./router/action/index.ts";
+import { confirmLoader, otpLoader } from "./router/loader/index.ts";
 
 export const router = createBrowserRouter([
   {
@@ -33,11 +34,13 @@ export const router = createBrowserRouter([
       {
         path: "verify-otp",
         element: <VerifyOtpPage />,
+        loader: otpLoader,
         action: verifyOtpAction
       },
       {
         path: "confirm-password",
         element: <ConfirmPasswordPage />,
+        loader: confirmLoader,
         action: confirmPasswordAction
       }
     ]
