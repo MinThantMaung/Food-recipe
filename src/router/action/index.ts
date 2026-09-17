@@ -35,7 +35,7 @@ export const registerAction = async ({ request }: ActionFunctionArgs) => {
   try {
     const response = await authApi.post("register", credentials);
     authStore.setAuth(response.data.email, response.data.token, Status.otp);
-    //return redirect("/register/verify-otp");
+    return redirect("/register/verify-otp");
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response) {
@@ -53,6 +53,7 @@ export const verifyOtpAction = async ({ request }: ActionFunctionArgs) => {
     otp: formData.get("otp"),
     token: authStore.token,
   };
+
   try {
     const response = await authApi.post("verify-otp", credentials);
     authStore.setAuth(response.data.email, response.data.token, Status.confirm);
