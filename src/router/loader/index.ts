@@ -1,9 +1,10 @@
+import { authApi } from "@/api";
 import useAuthStore, { Status } from "@/stores/authStore";
 import { redirect } from "react-router";
 
 export const loginLoader = async () => {
   try {
-    //await authApi.get("auth-check");
+    await authApi.get("auth-check");
     return redirect("/");
   } catch (error) {
     console.log("Loader error:", error);
