@@ -23,6 +23,7 @@ export function RegisterForm() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="food@example.com"
                 required
