@@ -23,6 +23,7 @@ export function ConfirmPasswordForm() {
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="12345Password"
                 required
