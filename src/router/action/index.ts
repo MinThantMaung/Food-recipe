@@ -1,6 +1,7 @@
 import { redirect, type ActionFunctionArgs } from "react-router";
 import { AxiosError } from "axios";
-import useAuthStore from "@/stores/authStore";
+import useAuthStore, { Status } from "@/stores/authStore";
+import { authApi } from "@/api";
 
 export const loginAction = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
@@ -30,10 +31,11 @@ export const registerAction = async ({ request }: ActionFunctionArgs) => {
   formData.forEach((value, key) => {
     credentials[key] = value;
   });
+
   try {
-    // const response = await authApi.post("register", credentials);
-    //authStore.setAuth(response.data.email, response.data.token, Status.otp);
-    return redirect("/register/verify-otp");
+    const response = await authApi.post("register", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.otp);
+    //return redirect("/register/verify-otp");
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response) {
@@ -52,8 +54,8 @@ export const verifyOtpAction = async ({ request }: ActionFunctionArgs) => {
     token: authStore.token,
   };
   try {
-    // const response = await authApi.post("verify-otp", credentials);
-    // authStore.setAuth(response.data.email, response.data.token, Status.confirm);
+    const response = await authApi.post("verify-otp", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.confirm);
     return redirect("/register/confirm-password");
   } catch (error) {
     if (error instanceof AxiosError) {
@@ -68,18 +70,17 @@ export const confirmPasswordAction = async ({
   request,
 }: ActionFunctionArgs) => {
   const authStore = useAuthStore.getState();
-  //const formData = await request.formData();
+  const formData = await request.formData();
 
-//   const credentials = {
-//     email: authStore.email,
-//     password: formData.get("password"),
-//     token: authStore.token,
-//   };
+  const credentials = {
+    email: authStore.email,
+    password: formData.get("password"),
+    token: authStore.token,
+  };
 
   try {
-    //await authApi.post("confirm-password", credentials);
+    await authApi.post("confirm-password", credentials);
     authStore.clearAuth();
-
     return redirect("/");
   } catch (error) {
     if (error instanceof AxiosError) {
