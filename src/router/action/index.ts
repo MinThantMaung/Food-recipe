@@ -1,25 +1,45 @@
 import { redirect, type ActionFunctionArgs } from "react-router";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import useAuthStore, { Status } from "@/stores/authStore";
-import { authApi } from "@/api";
+import api, { authApi } from "@/api";
 
-export const loginAction = async ({ request }: ActionFunctionArgs) => {
+type ApiErrorResponse = {
+  message?: string;
+};
+
+export type LoginActionData = {
+  error: string;
+};
+
+export const loginAction = async ({
+  request,
+}: ActionFunctionArgs): Promise<Response | LoginActionData> => {
   const formData = await request.formData();
-  const credentials: Record<string, FormDataEntryValue> = {};
 
-  formData.forEach((value, key) => {
-    credentials[key] = value;
-  });
+  const credentials = {
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
+  };
+
   try {
-    //api
-    const redirectTo = new URL(request.url).searchParams.get("redirect") || "/";
+    await authApi.post("login", credentials);
+
+    const redirectTo =
+      new URL(request.url).searchParams.get("redirect") || "/";
+
     return redirect(redirectTo);
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response) {
-        return { error: error.response.data.message };
-      }
+  } catch (error: unknown) {
+    if (axios.isAxiosError<ApiErrorResponse>(error)) {
+      return {
+        error:
+          error.response?.data?.message ??
+          "Login failed. Please check your email and password.",
+      };
     }
+
+    return {
+      error: "An unexpected error occurred. Please try again.",
+    };
   }
 };
 
@@ -89,5 +109,14 @@ export const confirmPasswordAction = async ({
         return { error: error.response.data.message };
       }
     }
+  }
+};
+
+export const logoutAction = async () => {
+  try {
+    await api.post("logout");
+    return redirect("/login");
+  } catch (error) {
+   
   }
 };
