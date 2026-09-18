@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 
 import RootLayout from "./pages/RootLayout";
 import AuthRootLayout from "./pages/AuthRootLayout.tsx";
@@ -7,8 +7,8 @@ import LoginPage from "./pages/auth/Login.tsx"
 import RegisterPage from "./pages/auth/Register.tsx"
 import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
 import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
-import { confirmPasswordAction, registerAction, verifyOtpAction } from "./router/action/index.ts";
-import { confirmLoader, otpLoader } from "./router/loader/index.ts";
+import { confirmPasswordAction, loginAction, logoutAction, registerAction, verifyOtpAction } from "./router/action/index.ts";
+import { confirmLoader, homeLoader, loginLoader, otpLoader } from "./router/loader/index.ts";
 
 export const router = createBrowserRouter([
   {
@@ -16,11 +16,13 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: "Error",
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <Home />,loader: homeLoader },
     ],
   },
   {
-    path: "/login", element: <LoginPage />
+    path: "/login", element: <LoginPage />,
+    loader: loginLoader,
+    action: loginAction
   },
   {
     path: "/register", 
@@ -29,6 +31,7 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <RegisterPage />,
+        loader: loginLoader,
         action: registerAction
       },
       {
@@ -44,5 +47,10 @@ export const router = createBrowserRouter([
         action: confirmPasswordAction
       }
     ]
+  },
+  {
+    path: "/logout",
+    action: logoutAction,
+    loader: () => redirect("/"),
   },
 ]);
