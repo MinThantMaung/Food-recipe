@@ -11,12 +11,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "../Icon";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import type { LoginActionData } from "@/router/action";
 const loginSchema = z.object({
   email: z
     .string()
@@ -32,7 +37,7 @@ const loginSchema = z.object({
   password: z
     .string()
     .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(8, "Password must be at least 8 characters"),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -45,11 +50,14 @@ export function LoginForm() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+  const submit = useSubmit();
+  const actionData = useActionData() as LoginActionData | undefined;
+  const navigation = useNavigation();
+
+  const isSubmitting = navigation.state === "submitting";
 
   const handleLogin = (data: LoginFormValues) => {
-    console.log("Login data:", data);
-
-    // call login API here later
+    submit(data, { method: "post", action: "/login" });
   };
 
   return (
@@ -72,37 +80,36 @@ export function LoginForm() {
       <form onSubmit={handleSubmit(handleLogin)} noValidate>
         <CardContent>
           <div className="flex flex-col gap-6">
-
+            {actionData?.error && (
+              <div role="alert" className="text-sm text-red-600">
+                {actionData.error}
+              </div>
+            )}
             {/* Email */}
             <div className="grid gap-2">
-              <Label htmlFor="email">
-                Email
-              </Label>
+              <Label htmlFor="email">Email</Label>
 
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="food@example.com"
                 {...register("email")}
               />
 
               {errors.email && (
-                <p className="text-xs text-red-500">
-                  {errors.email.message}
-                </p>
+                <p className="text-xs text-red-500">{errors.email.message}</p>
               )}
             </div>
 
             {/* Password */}
             <div className="grid gap-2">
               <div className="flex items-center">
-                <Label htmlFor="password">
-                  Password
-                </Label>
+                <Label htmlFor="password">Password</Label>
 
                 <Link
                   to="/forgot-password"
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:text-orange-500"
+                  className="ml-auto inline-block text-sm underline text-orange-500"
                 >
                   Forgot your password?
                 </Link>
@@ -110,6 +117,7 @@ export function LoginForm() {
 
               <Input
                 id="password"
+                name="password"
                 type="password"
                 {...register("password")}
               />
@@ -120,49 +128,34 @@ export function LoginForm() {
                 </p>
               )}
             </div>
-
           </div>
         </CardContent>
-
         <CardFooter className="flex-col gap-2 mt-6">
           <Button
             type="submit"
+            disabled={isSubmitting}
             className="w-full cursor-pointer bg-orange-500"
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}{" "}
           </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-          >
+          <Button type="button" variant="outline" className="w-full">
             Login with Google
           </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-          >
+          <Button type="button" variant="outline" className="w-full">
             Login with Facebook
           </Button>
 
           <div>
-            <span className="text-xs">
-              Don't have an account?
-            </span>
+            <span className="text-xs">Don't have an account?</span>
 
-            <Link
-              to="/register"
-              className="text-xs text-orange-500 underline"
-            >
+            <Link to="/register" className="text-xs text-orange-500 underline">
               Sign up
             </Link>
           </div>
         </CardFooter>
       </form>
-      {/* FORM ENDS HERE */}
     </Card>
   );
 }
