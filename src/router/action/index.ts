@@ -65,6 +65,28 @@ export const registerAction = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
+export const forgotPasswordAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+  const credentials: Record<string, FormDataEntryValue> = {};
+
+  formData.forEach((value, key) => {
+    credentials[key] = value;
+  });
+
+  try {
+    const response = await authApi.post("forgot-password", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.otp);
+    return redirect("/verify-reset-otp");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
 export const verifyOtpAction = async ({ request }: ActionFunctionArgs) => {
   const authStore = useAuthStore.getState();
   const formData = await request.formData();
@@ -116,7 +138,11 @@ export const logoutAction = async () => {
   try {
     await api.post("logout");
     return redirect("/login");
-  } catch (error) {
-   
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
   }
 };
