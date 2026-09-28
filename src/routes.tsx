@@ -7,14 +7,16 @@ import LoginPage from "./pages/auth/Login.tsx";
 import RegisterPage from "./pages/auth/Register.tsx";
 import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
 import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
-import ResetPassword from "./pages/auth/resetPassword.tsx";
+import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
 import {
   confirmPasswordAction,
   forgotPasswordAction,
   loginAction,
   logoutAction,
   registerAction,
+  resetPasswordAction,
   verifyOtpAction,
+  verifyOtpPasswordAction,
 } from "./router/action/index.ts";
 import {
   confirmLoader,
@@ -62,9 +64,27 @@ export const router = createBrowserRouter([
   },
   {
     path: "/forgot-password",
-    element: <ResetPassword />,
-    action: forgotPasswordAction,
-    loader: loginLoader
+    element: <AuthRootLayout />,
+    children: [
+      {
+        index: true,
+        element: <ForgotPassword />,
+        loader: loginLoader,
+        action: forgotPasswordAction,
+      },
+      {
+        path: "verify",
+        element: <VerifyOtpPage />,
+        loader: otpLoader,
+        action: verifyOtpPasswordAction,
+      },
+      {
+        path: "reset-password",
+        element: <ConfirmPasswordPage />,
+        loader: confirmLoader,
+        action: resetPasswordAction,
+      },
+    ],
   },
   {
     path: "/logout",
