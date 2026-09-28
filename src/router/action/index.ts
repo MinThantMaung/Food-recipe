@@ -77,7 +77,7 @@ export const forgotPasswordAction = async ({ request }: ActionFunctionArgs) => {
   try {
     const response = await authApi.post("forgot-password", credentials);
     authStore.setAuth(response.data.email, response.data.token, Status.otp);
-    return redirect("/verify-reset-otp");
+    return redirect("/forgot-password/verify");
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response) {
@@ -109,6 +109,28 @@ export const verifyOtpAction = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
+export const verifyOtpPasswordAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+  const credentials = {
+    email: authStore.email,
+    otp: formData.get("otp"),
+    token: authStore.token,
+  };
+
+  try {
+    const response = await authApi.post("verify", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.confirm);
+    return redirect("/forgot-password/reset-password");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
 export const confirmPasswordAction = async ({
   request,
 }: ActionFunctionArgs) => {
@@ -123,6 +145,31 @@ export const confirmPasswordAction = async ({
 
   try {
     await authApi.post("confirm-password", credentials);
+    authStore.clearAuth();
+    return redirect("/");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
+export const resetPasswordAction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+
+  const credentials = {
+    email: authStore.email,
+    password: formData.get("password"),
+    token: authStore.token,
+  };
+
+  try {
+    await authApi.post("reset-password", credentials);
     authStore.clearAuth();
     return redirect("/");
   } catch (error) {
