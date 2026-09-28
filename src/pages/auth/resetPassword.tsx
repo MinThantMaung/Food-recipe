@@ -1,8 +1,7 @@
-import registerBanner from "../../data/images/registerBanner.png"
 import { ResetPasswordForm } from "@/components/auth/resetPasswordForm";
+import registerBanner from "../../data/images/registerBanner.png";
 
-
-function resetPassword() {
+function ConfirmPassword() {
   return (
     <main className="relative min-h-dvh overflow-hidden">
       <div
@@ -11,9 +10,7 @@ function resetPassword() {
           backgroundImage: `url(${registerBanner})`,
         }}
       />
-      <div className="absolute inset-0 bg-black/20" />
 
-      {/* ResetPassword form */}
       <div className="relative z-10 flex min-h-dvh items-center justify-center">
         <div className="w-full max-w-sm">
           <ResetPasswordForm />
@@ -23,4 +20,4 @@ function resetPassword() {
   );
 }
 
-export default resetPassword;
+export default ConfirmPassword;
