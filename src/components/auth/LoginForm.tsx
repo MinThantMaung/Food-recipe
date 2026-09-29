@@ -3,13 +3,12 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Icons } from "../Icon";
 import {
   Link,
@@ -22,6 +21,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginActionData } from "@/router/action";
+import { EmailField } from "../form/EmailField";
+import { PasswordField } from "../form/PasswordField";
+import { SubmitButton } from "../form/SubmitButton";
 const loginSchema = z.object({
   email: z
     .string()
@@ -61,99 +63,91 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>
-          <div className="flex items-center justify-between">
-            <div className="flex text-lg font-bold tracking-tight text-foreground/80 transition-colors hover:text-foreground">
-              <Icons.logo aria-hidden="true" />
-
-              <span className="ml-2 font-sans text-orange-500">
-                Food Recipe
-              </span>
-            </div>
+    <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
+      <CardHeader className="gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex size-10 items-center justify-center">
+            <Icons.logo aria-hidden="true" />
           </div>
-        </CardTitle>
+          <span className="text-lg font-bold text-orange-500">Food Recipe</span>
+        </div>
+
+        <div>
+          <CardTitle className="text-2xl">Welcome back</CardTitle>
+          <CardDescription className="mt-1">
+            Sign in to save your favorites and find your next recipe.
+          </CardDescription>
+        </div>
       </CardHeader>
 
-      {/* FORM STARTS HERE */}
       <form onSubmit={handleSubmit(handleLogin)} noValidate>
-        <CardContent>
-          <div className="flex flex-col gap-6">
-            {actionData?.error && (
-              <div role="alert" className="text-sm text-red-600">
-                {actionData.error}
-              </div>
-            )}
-            {/* Email */}
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="food@example.com"
-                {...register("email")}
-              />
-
-              {errors.email && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-              )}
+        <CardContent className="space-y-4">
+          {actionData?.error && (
+            <div
+              role="alert"
+              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {actionData.error}
             </div>
+          )}
 
-            {/* Password */}
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+          <EmailField
+            id="email"
+            placeholder="food@example.com"
+            error={errors.email?.message}
+            {...register("email")}
+          />
 
-                <Link
-                  to="/forgot-password"
-                  className="ml-auto inline-block text-sm underline text-orange-500"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                {...register("password")}
-              />
-
-              {errors.password && (
-                <p className="text-xs text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-          </div>
+          <PasswordField
+            id="password"
+            label="Password"
+            autoComplete="current-password"
+            error={errors.password?.message}
+            labelAction={
+              <Link
+                to="/forgot-password"
+                className="text-xs font-medium text-orange-600 underline"
+              >
+                Forgot password?
+              </Link>
+            }
+            {...register("password")}
+          />
         </CardContent>
-        <CardFooter className="flex-col gap-2 mt-6">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full cursor-pointer bg-orange-500"
-          >
-            {isSubmitting ? "Logging in..." : "Login"}{" "}
-          </Button>
 
-          <Button type="button" variant="outline" className="w-full">
-            Login with Google
-          </Button>
+        <CardFooter className="mt-6 flex flex-col gap-5">
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            label="Sign in"
+            loadingLabel="Signing in"
+          />
 
-          <Button type="button" variant="outline" className="w-full">
-            Login with Facebook
-          </Button>
+          <div className="flex w-full items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-xs text-muted-foreground">
+              or continue with
+            </span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
 
-          <div>
-            <span className="text-xs">Don't have an account?</span>
+          <div className="grid w-full grid-cols-2 gap-3">
+            <Button type="button" variant="outline" className="h-11">
+              Google
+            </Button>
+            <Button type="button" variant="outline" className="h-11">
+              Facebook
+            </Button>
+          </div>
 
-            <Link to="/register" className="text-xs text-orange-500 underline">
+          <p className="text-center text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-orange-600 hover:underline"
+            >
               Sign up
             </Link>
-          </div>
+          </p>
         </CardFooter>
       </form>
     </Card>
