@@ -181,6 +181,28 @@ export const resetPasswordAction = async ({
   }
 };
 
+export const updateCountryAction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  const credentials = {
+    continentId: formData.get("continentId"),
+    countryCode: formData.get("countryId"),
+  };
+
+  try {
+    await authApi.post("update-country", credentials);
+    return redirect("/");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
 export const logoutAction = async () => {
   try {
     await api.post("logout");
