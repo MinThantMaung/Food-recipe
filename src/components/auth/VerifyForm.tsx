@@ -1,4 +1,4 @@
-import { RefreshCwIcon } from "lucide-react";
+import { ArrowLeft, RefreshCwIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldLabel } from "@/components/ui/field";
 import {
   InputOTP,
   InputOTPGroup,
@@ -16,16 +15,51 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Icons } from "../Icon";
-import { Form } from "react-router-dom";
+import { Link, useNavigation, useSubmit } from "react-router-dom";
 import useAuthStore, { Status } from "@/stores/authStore";
 import { useState } from "react";
 import { resendOtp } from "@/api/resendOtp";
 import axios from "axios";
 import { toast } from "../ui/toast";
+import z from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitButton } from "../form/SubmitButton";
+
+const verifySchema = z.object({
+  otp: z
+    .string()
+    .min(1, { error: "Verification code is required" })
+    .regex(/^\d{6}$/, {
+      error: "Enter a 6-digit verification code",
+    }),
+});
+
+type VerifyFormValues = z.infer<typeof verifySchema>;
+
 
 export function VerifyForm() {
+  const submit = useSubmit();
+  const navigation = useNavigation();
   const [isResending, setIsResending] = useState<boolean>(false);
   const { email, token, setAuth } = useAuthStore.getState();
+  const isSubmitting = navigation.state === "submitting";
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<VerifyFormValues>({
+    resolver: zodResolver(verifySchema),
+    defaultValues: { otp: "" },
+  });
+
+    const onSubmit = (values: VerifyFormValues) => {
+
+    submit(
+      { otp: values.otp, email, token },
+      { method: "post" },
+    );
+  };
   const resendEmail = async () => {
     setIsResending(true);
 
@@ -54,64 +88,122 @@ export function VerifyForm() {
     }
   };
   return (
-    <Card className="mx-auto max-w-md">
-      <CardHeader>
-        <CardTitle>
-          <div className="flex items-center">
-            <Icons.logo aria-hidden="true" />
-            <span className="ml-2 font-sans text-orange-500">Food Recipe</span>
+    <Card className="mx-auto w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
+      <CardHeader className="gap-5">
+        <Link
+          to="/register"
+          className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-orange-600"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Back to registration
+        </Link>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex size-10 items-center justify-center">
+              <Icons.logo aria-hidden="true" />
+            </div>
+            <span className="text-lg font-bold text-orange-500">
+              Food Recipe
+            </span>
           </div>
-        </CardTitle>
-        <CardDescription>
-          Enter the verification code we sent to your email address
-        </CardDescription>
+
+          <div className="space-y-1">
+            <CardTitle className="text-2xl">Verify your email</CardTitle>
+            <CardDescription>
+              Enter the 6-digit code we sent to{" "}
+              <span className="font-medium text-foreground">{email}</span>
+            </CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <Form method="post">
-        <CardContent>
-          <Field>
-            <div className="flex items-center justify-between">
-              <FieldLabel htmlFor="otp-verification">
+
+      <CardContent>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="space-y-6"
+        >
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <label
+                htmlFor="otp-verification"
+                className="text-sm font-medium"
+              >
                 Verification code
-              </FieldLabel>
+              </label>
+
               <Button
                 type="button"
-                variant="outline"
-                size="xs"
-                className="cursor-pointer"
+                variant="ghost"
+                size="sm"
                 onClick={resendEmail}
                 disabled={isResending}
+                className="h-8 cursor-pointer px-2 text-orange-600 hover:text-orange-700"
               >
                 <RefreshCwIcon
                   className={`size-4 ${isResending ? "animate-spin" : ""}`}
                   aria-hidden="true"
                 />
-                {isResending ? "Resending..." : "Resend Code"}
+                {isResending ? "Resending..." : "Resend code"}
               </Button>
             </div>
-            <div className="flex justify-center items-center">
-              <InputOTP maxLength={6} id="otp-verification" name="otp" required>
-                <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                </InputOTPGroup>
-                <InputOTPSeparator className="mx-2" />
-                <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-            <Button
-              type="submit"
-              className="w-full cursor-pointer bg-orange-500"
-            >
-              Verify
-            </Button>
-          </Field>
-        </CardContent>
-      </Form>
+
+            <Controller
+              name="otp"
+              control={control}
+              render={({ field }) => (
+                <div className="flex justify-center">
+                  <InputOTP
+                    id="otp-verification"
+                    maxLength={6}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    inputMode="numeric"
+                    pattern="^[0-9]+$"
+                    aria-invalid={!!errors.otp}
+                    aria-describedby={
+                      errors.otp ? "otp-error" : undefined
+                    }
+                  >
+                    <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-10 *:data-[slot=input-otp-slot]:text-xl sm:*:data-[slot=input-otp-slot]:w-11">
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+
+                    <InputOTPSeparator className="mx-1 sm:mx-2" />
+
+                    <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-10 *:data-[slot=input-otp-slot]:text-xl sm:*:data-[slot=input-otp-slot]:w-11">
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
+              )}
+            />
+
+            {errors.otp && (
+              <p
+                id="otp-error"
+                role="alert"
+                className="text-center text-xs text-red-600"
+              >
+                {errors.otp.message}
+              </p>
+            )}
+          </div>
+
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            label="Verify email"
+            loadingLabel="Verifying email"
+          />
+        </form>
+      </CardContent>
     </Card>
   );
 }
