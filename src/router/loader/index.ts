@@ -53,3 +53,13 @@ export const homeLoader = async () => {
     throw error;
   }
 };
+
+export const updateCountryLoader = async () => {
+  const authStore = useAuthStore.getState();
+
+  if (authStore.status !== Status.update) {
+    return redirect("/register");
+  }
+
+  return null;
+};
