@@ -8,6 +8,7 @@ export const Status = {
   confirm: "confirm",
   verify: "verify",
   reset: "reset",
+  update: "update",
   none: "none",
 } as const;
 
