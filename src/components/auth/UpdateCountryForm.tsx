@@ -31,12 +31,13 @@ type Continent = {
 type Country = {
   id: number;
   name: string;
+  code: string;
   continentId: number;
 };
 
 const countrySchema = z.object({
   continentId: z.string().min(1, "Please select a continent"),
-  countryId: z.string().min(1, "Please select a country"),
+  countryCode: z.string().length(2, "Please select a country"),
 });
 
 type CountryFormValues = z.infer<typeof countrySchema>;
@@ -58,7 +59,7 @@ export function UpdateCountryForm() {
     resolver: zodResolver(countrySchema),
     defaultValues: {
       continentId: "",
-      countryId: "",
+      countryCode: "",
     },
   });
 
@@ -166,7 +167,7 @@ export function UpdateCountryForm() {
                   value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value);
-                    setValue("countryId", "");
+                    setValue("countryCode", "");
                     setCountries([]);
                   }}
                   disabled={loadingContinents}
@@ -182,7 +183,13 @@ export function UpdateCountryForm() {
                           ? "Loading continents..."
                           : "Select a continent"
                       }
-                    />
+                    >
+                      {
+                        continents.find(
+                          (continent) => String(continent.id) === field.value,
+                        )?.name
+                      }
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
@@ -210,7 +217,7 @@ export function UpdateCountryForm() {
             <Label htmlFor="country">Country</Label>
 
             <Controller
-              name="countryId"
+              name="countryCode"
               control={control}
               render={({ field }) => (
                 <Select
@@ -221,7 +228,7 @@ export function UpdateCountryForm() {
                   <SelectTrigger
                     id="country"
                     className="w-full"
-                    aria-invalid={!!errors.countryId}
+                    aria-invalid={!!errors.countryCode}
                   >
                     <SelectValue
                       placeholder={
@@ -229,12 +236,18 @@ export function UpdateCountryForm() {
                           ? "Loading countries..."
                           : "Select a country"
                       }
-                    />
+                    >
+                      {
+                        countries.find(
+                          (country) => country.code === field.value,
+                        )?.name
+                      }
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
                     {countries.map((country) => (
-                      <SelectItem key={country.id} value={String(country.id)}>
+                      <SelectItem key={country.id} value={country.code}>
                         {country.name}
                       </SelectItem>
                     ))}
@@ -243,8 +256,10 @@ export function UpdateCountryForm() {
               )}
             />
 
-            {errors.countryId && (
-              <p className="text-xs text-red-600">{errors.countryId.message}</p>
+            {errors.countryCode && (
+              <p className="text-xs text-red-600">
+                {errors.countryCode.message}
+              </p>
             )}
           </div>
 
