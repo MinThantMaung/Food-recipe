@@ -63,6 +63,12 @@ export const router = createBrowserRouter([
         loader: confirmLoader,
         action: confirmPasswordAction,
       },
+      {
+        path: "update-country",
+        element: <UpdateCountryPage />,
+        loader: updateCountryLoader,
+        action: updateCountryAction,
+      },
     ],
   },
   {
@@ -86,13 +92,7 @@ export const router = createBrowserRouter([
         element: <ConfirmPasswordPage />,
         loader: confirmLoader,
         action: resetPasswordAction,
-      },
-      {
-        path: "update-country",
-        element: <UpdateCountryPage />,
-        loader: updateCountryLoader,
-        action: updateCountryAction,
-      },
+      }
     ],
   },
   {
