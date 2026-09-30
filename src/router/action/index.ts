@@ -11,38 +11,6 @@ export type LoginActionData = {
   error: string;
 };
 
-export const loginAction = async ({
-  request,
-}: ActionFunctionArgs): Promise<Response | LoginActionData> => {
-  const formData = await request.formData();
-
-  const credentials = {
-    email: String(formData.get("email") ?? ""),
-    password: String(formData.get("password") ?? ""),
-  };
-
-  try {
-    await authApi.post("login", credentials);
-
-    const redirectTo =
-      new URL(request.url).searchParams.get("redirect") || "/";
-
-    return redirect(redirectTo);
-  } catch (error: unknown) {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-      return {
-        error:
-          error.response?.data?.message ??
-          "Login failed. Please check your email and password.",
-      };
-    }
-
-    return {
-      error: "An unexpected error occurred. Please try again.",
-    };
-  }
-};
-
 export const registerAction = async ({ request }: ActionFunctionArgs) => {
   const authStore = useAuthStore.getState();
   const formData = await request.formData();
@@ -56,28 +24,6 @@ export const registerAction = async ({ request }: ActionFunctionArgs) => {
     const response = await authApi.post("register", credentials);
     authStore.setAuth(response.data.email, response.data.token, Status.otp);
     return redirect("/register/verify-otp");
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response) {
-        return { error: error.response.data.message };
-      }
-    }
-  }
-};
-
-export const forgotPasswordAction = async ({ request }: ActionFunctionArgs) => {
-  const authStore = useAuthStore.getState();
-  const formData = await request.formData();
-  const credentials: Record<string, FormDataEntryValue> = {};
-
-  formData.forEach((value, key) => {
-    credentials[key] = value;
-  });
-
-  try {
-    const response = await authApi.post("forgot-password", credentials);
-    authStore.setAuth(response.data.email, response.data.token, Status.otp);
-    return redirect("/forgot-password/verify");
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response) {
@@ -109,7 +55,80 @@ export const verifyOtpAction = async ({ request }: ActionFunctionArgs) => {
   }
 };
 
-export const verifyOtpPasswordAction = async ({ request }: ActionFunctionArgs) => {
+export const confirmPasswordAction = async ({
+  request,
+}: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+
+  const credentials = {
+    email: authStore.email,
+    password: formData.get("password"),
+    token: authStore.token,
+  };
+
+  try {
+    const response = await authApi.post("confirm-password", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.update);
+    return redirect("/register/update-country");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
+export const updateCountryAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+
+  const credentials = {
+    continentId: formData.get("continentId"),
+    countryCode: formData.get("countryCode"),
+    email: authStore.email,
+    token: authStore.token,
+  };
+
+  try {
+    await authApi.post("update-country", credentials);
+    authStore.clearAuth();
+    return redirect("/");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
+export const forgotPasswordAction = async ({ request }: ActionFunctionArgs) => {
+  const authStore = useAuthStore.getState();
+  const formData = await request.formData();
+  const credentials: Record<string, FormDataEntryValue> = {};
+
+  formData.forEach((value, key) => {
+    credentials[key] = value;
+  });
+
+  try {
+    const response = await authApi.post("forgot-password", credentials);
+    authStore.setAuth(response.data.email, response.data.token, Status.otp);
+    return redirect("/forgot-password/verify");
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response) {
+        return { error: error.response.data.message };
+      }
+    }
+  }
+};
+
+export const verifyOtpPasswordAction = async ({
+  request,
+}: ActionFunctionArgs) => {
   const authStore = useAuthStore.getState();
   const formData = await request.formData();
   const credentials = {
@@ -131,34 +150,7 @@ export const verifyOtpPasswordAction = async ({ request }: ActionFunctionArgs) =
   }
 };
 
-export const confirmPasswordAction = async ({
-  request,
-}: ActionFunctionArgs) => {
-  const authStore = useAuthStore.getState();
-  const formData = await request.formData();
-
-  const credentials = {
-    email: authStore.email,
-    password: formData.get("password"),
-    token: authStore.token,
-  };
-
-  try {
-    await authApi.post("confirm-password", credentials);
-    authStore.clearAuth();
-    return redirect("/");
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response) {
-        return { error: error.response.data.message };
-      }
-    }
-  }
-};
-
-export const resetPasswordAction = async ({
-  request,
-}: ActionFunctionArgs) => {
+export const resetPasswordAction = async ({ request }: ActionFunctionArgs) => {
   const authStore = useAuthStore.getState();
   const formData = await request.formData();
 
@@ -181,25 +173,34 @@ export const resetPasswordAction = async ({
   }
 };
 
-export const updateCountryAction = async ({
+export const loginAction = async ({
   request,
-}: ActionFunctionArgs) => {
+}: ActionFunctionArgs): Promise<Response | LoginActionData> => {
   const formData = await request.formData();
 
   const credentials = {
-    continentId: formData.get("continentId"),
-    countryCode: formData.get("countryId"),
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
   };
 
   try {
-    await authApi.post("update-country", credentials);
-    return redirect("/");
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response) {
-        return { error: error.response.data.message };
-      }
+    await authApi.post("login", credentials);
+
+    const redirectTo = new URL(request.url).searchParams.get("redirect") || "/";
+
+    return redirect(redirectTo);
+  } catch (error: unknown) {
+    if (axios.isAxiosError<ApiErrorResponse>(error)) {
+      return {
+        error:
+          error.response?.data?.message ??
+          "Login failed. Please check your email and password.",
+      };
     }
+
+    return {
+      error: "An unexpected error occurred. Please try again.",
+    };
   }
 };
 
