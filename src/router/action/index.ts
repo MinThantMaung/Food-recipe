@@ -68,9 +68,9 @@ export const confirmPasswordAction = async ({
   };
 
   try {
-    const response = await authApi.post("confirm-password", credentials);
-    authStore.setAuth(response.data.email, response.data.token, Status.update);
-    return redirect("/register/update-country");
+    await authApi.post("confirm-password", credentials);
+    authStore.clearAuth();
+    return redirect("/");
   } catch (error) {
     if (error instanceof AxiosError) {
       if (error.response) {
