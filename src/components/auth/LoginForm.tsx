@@ -24,6 +24,7 @@ import type { LoginActionData } from "@/router/action";
 import { EmailField } from "../form/EmailField";
 import { PasswordField } from "../form/PasswordField";
 import { SubmitButton } from "../form/SubmitButton";
+import { authApi } from "@/api";
 const loginSchema = z.object({
   email: z
     .string()
@@ -61,6 +62,12 @@ export function LoginForm() {
   const handleLogin = (data: LoginFormValues) => {
     submit(data, { method: "post", action: "/login" });
   };
+
+  // const googleLogin = async () => {
+  //   await authApi.post("auth/google", {
+  //     credential: googleIdToken,
+  //   });
+  // }
 
   return (
     <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
