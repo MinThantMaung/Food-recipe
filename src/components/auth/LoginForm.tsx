@@ -25,6 +25,9 @@ import { EmailField } from "../form/EmailField";
 import { PasswordField } from "../form/PasswordField";
 import { SubmitButton } from "../form/SubmitButton";
 import { authApi } from "@/api";
+import { useState } from "react";
+import axios from "axios";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 const loginSchema = z.object({
   email: z
     .string()
@@ -56,18 +59,49 @@ export function LoginForm() {
   const submit = useSubmit();
   const actionData = useActionData() as LoginActionData | undefined;
   const navigation = useNavigation();
-
   const isSubmitting = navigation.state === "submitting";
+  const [googleError, setGoogleError] = useState<string | null>(null);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
   const handleLogin = (data: LoginFormValues) => {
     submit(data, { method: "post", action: "/login" });
   };
 
-  // const googleLogin = async () => {
-  //   await authApi.post("auth/google", {
-  //     credential: googleIdToken,
-  //   });
-  // }
+  const handleGoogleSuccess = async (response: CredentialResponse) => {
+    setGoogleError(null);
+
+    if (!response.credential) {
+      setGoogleError("Google did not return a credential. Please try again.");
+      return;
+    }
+
+    setIsGoogleSubmitting(true);
+
+    try {
+      const result = await authApi.post("google", {
+        credential: response.credential,
+      });
+
+      // Temporary: the backend currently verifies identity only.
+      if (result.data.authenticated !== true) {
+        setGoogleError(
+          "Google identity verified. App login still needs database and cookie setup.",
+        );
+        return;
+      }
+
+      // After the backend sets your login cookies:
+      window.location.assign("/");
+    } catch (error) {
+      const message = axios.isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message
+        : undefined;
+
+      setGoogleError(message ?? "Google login failed. Please try again.");
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
+  };
 
   return (
     <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
@@ -137,14 +171,48 @@ export function LoginForm() {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          <div className="grid w-full grid-cols-2 gap-3">
-            <Button type="button" variant="outline" className="h-11">
-              Google
-            </Button>
-            <Button type="button" variant="outline" className="h-11">
-              Facebook
+          <div className="flex w-full flex-col items-center gap-3">
+            <div className="flex min-h-11 w-full justify-center">
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => {
+                  setGoogleError("Google sign-in failed. Please try again.");
+                }}
+                theme="outline"
+                size="large"
+                text="continue_with"
+                shape="rectangular"
+                width={300}
+                logo_alignment="left"
+              />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="h-10 w-full max-w-75 gap-3 font-medium"
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="size-5 shrink-0 fill-[#1877F2]"
+              >
+                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.887v2.263h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z" />
+              </svg>
+              Continue with Facebook
             </Button>
           </div>
+          {isGoogleSubmitting && (
+            <p role="status" className="text-sm text-muted-foreground">
+              Signing in with Google…
+            </p>
+          )}
+
+          {googleError && (
+            <p role="alert" className="text-center text-sm text-red-600">
+              {googleError}
+            </p>
+          )}
 
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
