@@ -6,7 +6,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Icons } from "../Icon";
-import { Link, useNavigation, useSubmit } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +45,8 @@ export function RegisterForm() {
   });
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData() as { error?: string } | undefined;
+
   const onSubmit = (values: RegisterFormValues) => {
     submit(values, { method: "post" });
   };
@@ -84,6 +91,12 @@ export function RegisterForm() {
             error={errors.email?.message}
             {...register("email")}
           />
+
+          {actionData?.error && (
+            <p role="alert" className="text-sm text-destructive">
+              {actionData.error}
+            </p>
+          )}
 
           <SubmitButton
             isSubmitting={isSubmitting}
