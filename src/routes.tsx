@@ -7,8 +7,8 @@ import LoginPage from "./pages/auth/Login.tsx";
 import RegisterPage from "./pages/auth/Register.tsx";
 import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
 import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
-import ForgotPassword from "./pages/auth/ForgotPassword.tsx";
-import UpdateCountryPage from "./pages/auth/UpdateCountry.tsx";
+import ForgotPasswordPage from "./pages/auth/ForgotPassword.tsx";
+import ResetPasswordPage from "./pages/auth/ResetPassword.tsx";
 import {
   confirmPasswordAction,
   forgotPasswordAction,
@@ -16,7 +16,6 @@ import {
   logoutAction,
   registerAction,
   resetPasswordAction,
-  updateCountryAction,
   verifyOtpAction,
   verifyOtpPasswordAction,
 } from "./router/action/index.ts";
@@ -25,7 +24,6 @@ import {
   homeLoader,
   loginLoader,
   otpLoader,
-  updateCountryLoader,
 } from "./router/loader/index.ts";
 
 export const router = createBrowserRouter([
@@ -63,12 +61,6 @@ export const router = createBrowserRouter([
         loader: confirmLoader,
         action: confirmPasswordAction,
       },
-      {
-        path: "update-country",
-        element: <UpdateCountryPage />,
-        loader: updateCountryLoader,
-        action: updateCountryAction,
-      },
     ],
   },
   {
@@ -77,7 +69,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ForgotPassword />,
+        element: <ForgotPasswordPage />,
         loader: loginLoader,
         action: forgotPasswordAction,
       },
@@ -89,7 +81,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "reset-password",
-        element: <ConfirmPasswordPage />,
+        element: <ResetPasswordPage />,
         loader: confirmLoader,
         action: resetPasswordAction,
       }
