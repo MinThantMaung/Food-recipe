@@ -1,7 +1,7 @@
-import { ResetPasswordForm } from "@/components/auth/resetPasswordForm";
+import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 import registerBanner from "../../data/images/registerBanner.png";
 
-function ConfirmPassword() {
+function ResetPassword() {
   return (
     <main className="relative min-h-dvh overflow-hidden">
       <div
@@ -20,4 +20,4 @@ function ConfirmPassword() {
   );
 }
 
-export default ConfirmPassword;
+export default ResetPassword;
