@@ -15,9 +15,14 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Icons } from "../Icon";
-import { Link, useNavigation, useSubmit } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 import useAuthStore, { Status } from "@/stores/authStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { resendOtp } from "@/api/resendOtp";
 import axios from "axios";
 import { toast } from "../ui/toast";
@@ -37,13 +42,21 @@ const verifySchema = z.object({
 
 type VerifyFormValues = z.infer<typeof verifySchema>;
 
-
 export function VerifyForm() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const [isResending, setIsResending] = useState<boolean>(false);
   const { email, token, setAuth } = useAuthStore.getState();
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData() as { error?: string } | undefined;
+  const [resendAvailableAt, setResendAvailableAt] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+
+  const cooldownSeconds = Math.max(
+    0,
+    Math.ceil((resendAvailableAt - now) / 1000),
+  );
+
   const {
     control,
     handleSubmit,
@@ -53,12 +66,25 @@ export function VerifyForm() {
     defaultValues: { otp: "" },
   });
 
-    const onSubmit = (values: VerifyFormValues) => {
+  useEffect(() => {
+    if (resendAvailableAt <= Date.now()) return;
 
-    submit(
-      { otp: values.otp, email, token },
-      { method: "post" },
-    );
+    const timer = window.setInterval(() => {
+      const currentTime = Date.now();
+      setNow(currentTime);
+
+      if (currentTime >= resendAvailableAt) {
+        window.clearInterval(timer);
+      }
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [resendAvailableAt]);
+
+  const otpError = errors.otp?.message ?? actionData?.error;
+
+  const onSubmit = (values: VerifyFormValues) => {
+    submit({ otp: values.otp, email, token }, { method: "post" });
   };
   const resendEmail = async () => {
     setIsResending(true);
@@ -70,6 +96,10 @@ export function VerifyForm() {
         setAuth(email, data.token, Status.otp);
       }
 
+      const currentTime = Date.now();
+      setNow(currentTime);
+      setResendAvailableAt(currentTime + 60 * 1000);
+
       toast.add({
         title: "A new code was sent.",
         description: data.message ?? "A new verification code was sent.",
@@ -79,7 +109,7 @@ export function VerifyForm() {
       toast.add({
         title: "Error",
         description: axios.isAxiosError<{ message?: string }>(error)
-          ? error.response?.data?.message ?? "Could not resend the code."
+          ? (error.response?.data?.message ?? "Could not resend the code.")
           : "An unexpected error occurred. Please try again.",
         type: "error",
       });
@@ -126,10 +156,7 @@ export function VerifyForm() {
         >
           <div className="space-y-3">
             <div className="flex items-center justify-between gap-3">
-              <label
-                htmlFor="otp-verification"
-                className="text-sm font-medium"
-              >
+              <label htmlFor="otp-verification" className="text-sm font-medium">
                 Verification code
               </label>
 
@@ -138,14 +165,19 @@ export function VerifyForm() {
                 variant="ghost"
                 size="sm"
                 onClick={resendEmail}
-                disabled={isResending}
+                disabled={isResending || isSubmitting || cooldownSeconds > 0}
                 className="h-8 cursor-pointer px-2 text-orange-600 hover:text-orange-700"
               >
                 <RefreshCwIcon
                   className={`size-4 ${isResending ? "animate-spin" : ""}`}
                   aria-hidden="true"
                 />
-                {isResending ? "Resending..." : "Resend code"}
+
+                {isResending
+                  ? "Resending..."
+                  : cooldownSeconds > 0
+                    ? `Resend in ${cooldownSeconds}s`
+                    : "Resend code"}
               </Button>
             </div>
 
@@ -164,9 +196,7 @@ export function VerifyForm() {
                     inputMode="numeric"
                     pattern="^[0-9]+$"
                     aria-invalid={!!errors.otp}
-                    aria-describedby={
-                      errors.otp ? "otp-error" : undefined
-                    }
+                    aria-describedby={errors.otp ? "otp-error" : undefined}
                   >
                     <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-10 *:data-[slot=input-otp-slot]:text-xl sm:*:data-[slot=input-otp-slot]:w-11">
                       <InputOTPSlot index={0} />
@@ -186,13 +216,13 @@ export function VerifyForm() {
               )}
             />
 
-            {errors.otp && (
+            {otpError && (
               <p
                 id="otp-error"
                 role="alert"
-                className="text-center text-xs text-red-600"
+                className="text-center text-sm text-destructive"
               >
-                {errors.otp.message}
+                {otpError}
               </p>
             )}
           </div>
