@@ -1,75 +1,110 @@
-import { ArrowLeft, Mail } from "lucide-react";
-import { Link, Form, useNavigation } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import {
+  Link,
+  useNavigation,
+  useActionData,
+  useSubmit,
+} from "react-router-dom";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Icons } from "../Icon";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EmailField } from "../form/EmailField";
+import { SubmitButton } from "../form/SubmitButton";
+
+const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, {
+      error: "Email is required",
+    })
+    .pipe(
+      z.email({
+        error: "Please enter a valid email address",
+      }),
+    ),
+});
+
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordForm() {
+  const submit = useSubmit();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+  const actionData = useActionData() as { error?: string } | undefined;
 
+  const onSubmit = (values: ForgotPasswordFormValues) => {
+    submit(values, { method: "post" });
+  };
   return (
-    <Card className="w-full max-w-sm border-orange-100 shadow-lg">
-      <CardHeader className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Icons.logo aria-hidden="true" />
-          <span className="font-sans font-semibold text-orange-500">
-            Food Recipe
-          </span>
-        </div>
+    <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
+      <CardHeader className="gap-5">
+        <Link
+          to="/login"
+          className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-orange-600"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          Back to login
+        </Link>
 
-        <div className="space-y-1">
-          <CardDescription>
-            Enter your email and we will send you a link to reset it.
-          </CardDescription>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Icons.logo aria-hidden="true" />
+            <span className="font-semibold text-orange-500">Food Recipe</span>
+          </div>
+
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-bold tracking-tight">
+              Reset Your Password
+            </CardTitle>
+            <CardDescription>
+              Enter your email and we will send you a link to reset it.
+            </CardDescription>
+          </div>
         </div>
       </CardHeader>
 
       <CardContent>
-        <Form method="post" className="space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
+          noValidate
+        >
           <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
-            <div className="relative">
-              <Mail
-                aria-hidden="true"
-                className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                className="pl-9"
-                required
-              />
-            </div>
+            <EmailField
+              id="email"
+              error={errors.email?.message}
+              {...register("email")}
+            />
+
+            {actionData?.error && (
+              <p role="alert" className="text-sm text-destructive">
+                {actionData.error}
+              </p>
+            )}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full cursor-pointer bg-orange-500 hover:bg-orange-600"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Sending..." : "Sent Otp Code"}
-          </Button>
-
-          <Link
-            to="/login"
-            className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:cursor-pointer hover:text-orange-500"
-          >
-            <ArrowLeft size={16} />
-            Back to login
-          </Link>
-        </Form>
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            label="Send verification code"
+            loadingLabel="Sending verification code"
+          />
+        </form>
       </CardContent>
     </Card>
   );
