@@ -73,7 +73,7 @@ export function ForgotPasswordForm() {
               Reset Your Password
             </CardTitle>
             <CardDescription>
-              Enter your email and we will send you a link to reset it.
+              Enter your email and we will send you a verification code to reset it.
             </CardDescription>
           </div>
         </div>
