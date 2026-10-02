@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 import {
   Card,
   CardContent,
@@ -9,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { Icons } from "../Icon";
+import logo from "../../assets/food-recipe-logo.svg";
 import {
   Link,
   useActionData,
@@ -105,17 +103,21 @@ export function LoginForm() {
 
   return (
     <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
-      <CardHeader className="gap-2">
-        <div className="flex items-center gap-2">
-          <div className="flex size-10 items-center justify-center">
-            <Icons.logo aria-hidden="true" />
-          </div>
-          <span className="text-lg font-bold text-orange-500">Food Recipe</span>
+      <CardHeader className="gap-5">
+        <div className="flex items-center gap-1.5">
+          <img src={logo} alt="" className="size-8 shrink-0" />
+
+          <span className="text-lg font-bold tracking-tight text-orange-500">
+            Food Recipe
+          </span>
         </div>
 
-        <div>
-          <CardTitle className="text-2xl">Welcome back</CardTitle>
-          <CardDescription className="mt-1">
+        <div className="space-y-2">
+          <CardTitle className="text-2xl font-semibold tracking-tight">
+            Welcome back
+          </CardTitle>
+
+          <CardDescription className="text-sm leading-relaxed">
             Sign in to save your favorites and find your next recipe.
           </CardDescription>
         </div>
@@ -147,7 +149,7 @@ export function LoginForm() {
             labelAction={
               <Link
                 to="/forgot-password"
-                className="text-xs font-medium text-orange-600 underline"
+                className="text-xs font-medium text-orange-500 underline"
               >
                 Forgot password?
               </Link>
@@ -171,7 +173,7 @@ export function LoginForm() {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          <div className="flex w-full flex-col items-center gap-3">
+          <div className="flex w-full flex-col items-center">
             <div className="flex min-h-11 w-full justify-center">
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
@@ -186,21 +188,6 @@ export function LoginForm() {
                 logo_alignment="left"
               />
             </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="h-10 w-full max-w-75 gap-3 font-medium"
-            >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="size-5 shrink-0 fill-[#1877F2]"
-              >
-                <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.931-1.956 1.887v2.263h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073Z" />
-              </svg>
-              Continue with Facebook
-            </Button>
           </div>
           {isGoogleSubmitting && (
             <p role="status" className="text-sm text-muted-foreground">
@@ -218,7 +205,7 @@ export function LoginForm() {
             Don&apos;t have an account?{" "}
             <Link
               to="/register"
-              className="font-semibold text-orange-600 hover:underline"
+              className="font-semibold text-orange-500 hover:underline"
             >
               Sign up
             </Link>
