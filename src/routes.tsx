@@ -31,7 +31,13 @@ export const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     errorElement: "Error",
-    children: [{ index: true, element: <Home />, loader: homeLoader }],
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        //  loader: homeLoader
+      },
+    ],
   },
   {
     path: "/login",
@@ -84,7 +90,7 @@ export const router = createBrowserRouter([
         element: <ResetPasswordPage />,
         loader: confirmLoader,
         action: resetPasswordAction,
-      }
+      },
     ],
   },
   {
