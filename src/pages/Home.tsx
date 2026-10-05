@@ -1,4 +1,5 @@
 import { CuisineCategories } from "@/components/home/CuisineCategories";
+import { FoodRecommendation } from "@/components/home/FoodRecommendation";
 import { Hero } from "@/components/home/Hero";
 import { MealCategories } from "@/components/home/MealCategories";
 
@@ -7,6 +8,7 @@ function Home() {
     <div className="container mx-auto">
       <Hero />
       <MealCategories />
+      <FoodRecommendation />
       <CuisineCategories />
       {/* <Form action="/logout" method="post">
         <Button type="submit" variant="outline">
