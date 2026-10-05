@@ -1,4 +1,4 @@
-import { meals } from "@/utils/Homeitems";
+import { meals } from "@/utils/items";
 import { MenuCard } from "@/utils/MenuCard";
 
 export const MealCategories = () => {
@@ -14,7 +14,7 @@ export const MealCategories = () => {
             key={meal.category}
             title={meal.title}
             image={meal.image}
-            to={`/recipes?category=${meal.category}`}
+            to={`/recipes?meal=${meal.category}`}
           />
         ))}
       </div>
