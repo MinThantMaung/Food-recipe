@@ -1,4 +1,4 @@
-import heroImage from "@/assets/hero.png";
+import heroImage from "@/assets/Home/hero.png";
 import { Search } from "lucide-react";
 import { ButtonGroup } from "../ui/button-group";
 import { Input } from "../ui/input";
