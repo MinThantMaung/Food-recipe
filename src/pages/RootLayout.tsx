@@ -1,17 +1,36 @@
-import { Outlet } from "react-router-dom";
-import Header from "../components/layouts/Header"
+
+import { Outlet, useLocation } from "react-router-dom";
+import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
+import { cn } from "@/lib/utils";
 
 function RootLayout() {
-    return (
-        <div className="flex flex-col min-h-screen overflow-hidden bg-[#FAF9F6]">
-            <Header />
-            <main className="flex-1 mt-16">
-                <Outlet />
-            </main>
-            <Footer />
-        </div>
-    );
+  const { pathname } = useLocation();
+  const isPrivacyPage = pathname === "/privacy";
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col bg-[#FAF9F6]",
+        isPrivacyPage
+          ? "h-dvh overflow-hidden"
+          : "min-h-dvh"
+      )}
+    >
+      <Header />
+
+      <main
+        className={cn(
+          "mt-16 flex-1",
+          isPrivacyPage && "min-h-0"
+        )}
+      >
+        <Outlet />
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
 
 export default RootLayout;
