@@ -25,6 +25,11 @@ import {
   loginLoader,
   otpLoader,
 } from "./router/loader/index.ts";
+import RecipesPage from "./pages/Recipes.tsx";
+import CuisinePage from "./pages/Cuisines.tsx";
+import AboutPage from "./pages/About.tsx"
+import PrivacyPage from "./pages/Privacy.tsx";
+import ContantPage from "./pages/Contact.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +42,26 @@ export const router = createBrowserRouter([
         element: <Home />,
         //  loader: homeLoader
       },
+      {
+        path: "recipes",
+        element: <RecipesPage />,
+      },
+      {
+        path: "cuisines",
+        element: <CuisinePage />,
+      },
+      {
+        path: "about",
+        element: <AboutPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPage />
+      },
+      {
+        path: "contact",
+        element: <ContantPage />
+      }
     ],
   },
   {
