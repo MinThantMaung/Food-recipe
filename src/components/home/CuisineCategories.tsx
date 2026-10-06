@@ -36,7 +36,7 @@ export const CuisineCategories = () => {
             key={cuisine.cuisine}
             title={cuisine.title}
             image={cuisine.image}
-            to={`/recipes?cuisine=${cuisine.cuisine}`}
+            to={`/recipes?cuisine=${encodeURIComponent(cuisine.cuisine.toLowerCase())}`}
           />
         ))}
       </div>
