@@ -27,9 +27,10 @@ import {
 } from "./router/loader/index.ts";
 import RecipesPage from "./pages/Recipes.tsx";
 import CuisinePage from "./pages/Cuisines.tsx";
-import AboutPage from "./pages/About.tsx"
+import AboutPage from "./pages/About.tsx";
 import PrivacyPage from "./pages/Privacy.tsx";
 import ContantPage from "./pages/Contact.tsx";
+import RecipeDetailPage from "./pages/RecipeDeatil.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
         element: <RecipesPage />,
       },
       {
+        path: "recipes/:recipeId",
+        element: <RecipeDetailPage />,
+      },
+      {
         path: "cuisines",
         element: <CuisinePage />,
       },
@@ -56,12 +61,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "privacy",
-        element: <PrivacyPage />
+        element: <PrivacyPage />,
       },
       {
         path: "contact",
-        element: <ContantPage />
-      }
+        element: <ContantPage />,
+      },
     ],
   },
   {
