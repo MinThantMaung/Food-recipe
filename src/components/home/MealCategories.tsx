@@ -14,7 +14,7 @@ export const MealCategories = () => {
             key={meal.category}
             title={meal.title}
             image={meal.image}
-            to={`/recipes?meal=${meal.category}`}
+            to={`/recipes?meal=${encodeURIComponent(meal.category.toLowerCase())}`}
           />
         ))}
       </div>
