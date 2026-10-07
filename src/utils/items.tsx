@@ -7,7 +7,8 @@ import myanmarCuisine from "../assets/Home/MyanmarCuisine.png";
 import thaiCuisine from "../assets/Home/ThaiCuisine.png";
 import italianCuisine from "../assets/Home/ItalianCuisine.png";
 import { ChefHat, Globe, Heart, Lightbulb, MessageCircle, Wrench } from "lucide-react";
-import type { Ingredient } from "./IngredientItem";
+import type { Ingredient } from "./RecipeIngredients";
+import type { Instruction } from "./RecipesInstructions";
 
 export const meals = [
   { title: "Breakfast", image: breakfastImage, category: "breakfast" },
@@ -634,4 +635,37 @@ export const ingredients: Ingredient[] = [
   { id: 6, name: "Water", quantity: 350, unit: "ml" },
   { id: 7, name: "Cooked rice", note: "to serve" },
   { id: 8, name: "Salt", note: "to taste" },
+];
+
+export const instructions: Instruction[] = [
+  {
+    id: 1,
+    step: 1,
+    title: "Prepare the chicken",
+    description: "Peel and chop the potatoes and carrots into bite-sized pieces. Slice the onion, and Cut the chicken into pieces.",
+  },
+  {
+    id: 2,
+    step: 2,
+    title: "Saute chicken and vegetables",
+    description: "Heat a little oil in a large pot over medium heat. Add the chicken and cook until lightly browned. Add the onion, potatoes, and carrots, and saute for a few minutes until onion becomes soft.",
+  },
+  {
+    id: 3,
+    step: 3,
+    title: "Simmer",
+    description: "Add water to the pot and bring to a boil. Reduce the heat, cover, and simmer until the vegetables are tender.",
+  },
+  {
+    id: 4,
+    step: 4,
+    title: "Add curry roux",
+    description: "Turn off the heat and add the curry roux. Stir until dissolved,then return to low heat and simmer,strir occasionally until the sauce thickens.",
+  },
+  {
+    id: 5,
+    step: 5,
+    title: "Serve",
+    description: "Spoon the curry over cooked rice and serve hot. Adjust salt to taste.",
+  }
 ];
