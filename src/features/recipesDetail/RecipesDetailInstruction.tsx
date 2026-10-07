@@ -1,6 +1,7 @@
-import { RecipeIngredients } from "@/utils/IngredientItem";
-import { ingredients } from "@/utils/items";
+import { RecipeIngredients } from "@/utils/RecipeIngredients";
+import { ingredients, instructions } from "@/utils/items";
 import { ButtonGroupSplit } from "@/utils/ServingButton";
+import { RecipesInstructions } from "@/utils/RecipesInstructions";
 
 type RecipesDetailsInstructionProps = {
   serving: number;
@@ -37,9 +38,10 @@ export function RecipesDetailsInstruction({
         />
       </div>
       <div className="rounded-xl border border-gray-100 bg-white p-4 md:p-6">
-        <div className="font-bold text-xl md:text-2xl tracking-tight">
+        <h2 className="font-bold text-xl md:text-2xl tracking-tight">
           Instruction
-        </div>
+        </h2>
+        <RecipesInstructions instructions={instructions} />
       </div>
     </div>
   );
