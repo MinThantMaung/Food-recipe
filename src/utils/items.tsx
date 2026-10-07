@@ -7,6 +7,7 @@ import myanmarCuisine from "../assets/Home/MyanmarCuisine.png";
 import thaiCuisine from "../assets/Home/ThaiCuisine.png";
 import italianCuisine from "../assets/Home/ItalianCuisine.png";
 import { ChefHat, Globe, Heart, Lightbulb, MessageCircle, Wrench } from "lucide-react";
+import type { Ingredient } from "./IngredientItem";
 
 export const meals = [
   { title: "Breakfast", image: breakfastImage, category: "breakfast" },
@@ -619,3 +620,18 @@ export const recipesItems = [
   },
 ];
 
+export const ingredients: Ingredient[] = [
+  {
+    id: 1,
+    name: "Chicken (boneless, skinless)",
+    quantity: 250,
+    unit: "g",
+  },
+  { id: 2, name: "Potatoes", quantity: 1 },
+  { id: 3, name: "Carrots", quantity: 1 },
+  { id: 4, name: "Onion", quantity: 0.5 },
+  { id: 5, name: "Curry roux (Japanese)", quantity: 50, unit: "g" },
+  { id: 6, name: "Water", quantity: 350, unit: "ml" },
+  { id: 7, name: "Cooked rice", note: "to serve" },
+  { id: 8, name: "Salt", note: "to taste" },
+];
