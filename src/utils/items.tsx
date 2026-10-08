@@ -9,6 +9,7 @@ import italianCuisine from "../assets/Home/ItalianCuisine.png";
 import { ChefHat, Globe, Heart, Lightbulb, MessageCircle, Wrench } from "lucide-react";
 import type { Ingredient } from "../features/recipes/components/detail/RecipeIngredients";
 import type { Instruction } from "../features/recipes/components/detail/RecipesInstructions";
+import type { Review } from "./ReviewCard";
 
 export const meals = [
   { title: "Breakfast", image: breakfastImage, category: "breakfast" },
@@ -668,4 +669,25 @@ export const instructions: Instruction[] = [
     title: "Serve",
     description: "Spoon the curry over cooked rice and serve hot. Adjust salt to taste.",
   }
+];
+
+export const reviews: Review[] = [
+  {
+    id: 1,
+    image: desertImage,
+    name: "Samanta Lee",
+    rating: 5,
+    description: "The recipe was easy to follow and turned out delicious!The curry sauce is rich and comforting.My family love it.",
+    commentDate: "May 12, 2024"
+
+  },
+   {
+    id: 2,
+    image: desertImage,
+    name: "Daniel Kim",
+    rating: 4.5,
+    description: "The recipe was easy to follow and turned out delicious!The curry sauce is rich and comforting.My family love it.",
+    commentDate: "May 12, 2024"
+
+  },
 ];
