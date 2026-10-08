@@ -4,6 +4,7 @@ import { RecipesDetailsHero } from "@/features/recipes/components/detail/Recipes
 import { RecipesDetailStats } from "@/features/recipes/components/detail/RecipesDetailStats";
 import { RecipesDetailsInstruction } from "@/features/recipes/components/detail/RecipesDetailInstruction";
 import { useState } from "react";
+import { RecipesReview } from "@/features/recipes/components/detail/RecipesReview";
 
 function RecipeDetail() {
   const { recipeId } = useParams();
@@ -41,6 +42,8 @@ function RecipeDetail() {
           onDecrease={decreaseServing}
           onServingChange={changeServing}
         />
+
+        <RecipesReview />
       </section>
     </div>
   );
