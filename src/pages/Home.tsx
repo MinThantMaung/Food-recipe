@@ -1,7 +1,7 @@
-import { CuisineCategories } from "@/components/home/CuisineCategories";
-import { FoodRecommendation } from "@/components/home/FoodRecommendation";
-import { Hero } from "@/components/home/Hero";
-import { MealCategories } from "@/components/home/MealCategories";
+import { CuisineCategories } from "@/features/auth/home/CuisineCategories";
+import { FoodRecommendation } from "@/features/auth/home/FoodRecommendation";
+import { Hero } from "@/features/auth/home/Hero";
+import { MealCategories } from "@/features/auth/home/MealCategories";
 
 function Home() {
   return (

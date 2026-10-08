@@ -1,20 +1,14 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Icons } from "../Icon";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icons } from "../../../components/Icon";
 import { Link, useNavigation, useSubmit } from "react-router-dom";
+import { PasswordField } from "../../../components/form/PasswordField";
+import { SubmitButton } from "../../../components/form/SubmitButton";
 import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
-import { PasswordField } from "../form/PasswordField";
-import { SubmitButton } from "../form/SubmitButton";
 
-const resetSchema = z
+const registerSchema = z
   .object({
     password: z
       .string()
@@ -36,20 +30,20 @@ const resetSchema = z
     message: "Passwords do not match",
   });
 
-type ResetFormValues = z.infer<typeof resetSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export function ResetPasswordForm() {
+export function ConfirmPasswordForm() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ResetFormValues>({
-    resolver: zodResolver(resetSchema),
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
   });
   const isSubmitting = navigation.state === "submitting";
-  const onSubmit = (values: ResetFormValues) => {
+  const onSubmit = (values: RegisterFormValues) => {
     submit(values, { method: "post" });
   };
   return (
@@ -74,13 +68,14 @@ export function ResetPasswordForm() {
           </div>
 
           <div className="space-y-1">
-            <CardTitle className="text-2xl">Reset your password</CardTitle>
+            <CardTitle className="text-2xl">Create your password</CardTitle>
             <CardDescription>
-              Choose a strong password to finish reseting password.
+              Choose a strong password to finish creating your account.
             </CardDescription>
           </div>
         </div>
       </CardHeader>
+
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-5">
@@ -102,8 +97,8 @@ export function ResetPasswordForm() {
 
             <SubmitButton
               isSubmitting={isSubmitting}
-              label="Reset Password"
-              loadingLabel="Reseting Password"
+              label="Create account"
+              loadingLabel="Creating account"
             />
           </div>
         </form>

@@ -1,5 +1,5 @@
 import registerBanner from "../../data/images/registerBanner.png"
-import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+import { ForgotPasswordForm } from "@/features/auth/components/ForgotPasswordForm";
 
 
 function ForgotPassword() {

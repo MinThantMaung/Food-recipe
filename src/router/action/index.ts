@@ -1,6 +1,6 @@
 import { redirect, type ActionFunctionArgs } from "react-router";
 import axios, { AxiosError } from "axios";
-import useAuthStore, { Status } from "@/stores/authStore";
+import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import api, { authApi } from "@/api";
 
 type ApiErrorResponse = {

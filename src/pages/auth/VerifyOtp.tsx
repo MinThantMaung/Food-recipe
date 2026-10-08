@@ -1,4 +1,4 @@
-import { VerifyForm } from "@/components/auth/VerifyForm";
+import { VerifyForm } from "@/features/auth/components/VerifyForm";
 import registerBanner from "../../data/images/registerBanner.png"
 
 

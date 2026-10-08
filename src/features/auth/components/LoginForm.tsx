@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import logo from "../../assets/food-recipe-logo.svg";
+import logo from "../../../assets/food-recipe-logo.svg";
 import {
   Link,
   useActionData,
@@ -19,9 +19,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { LoginActionData } from "@/router/action";
-import { EmailField } from "../form/EmailField";
-import { PasswordField } from "../form/PasswordField";
-import { SubmitButton } from "../form/SubmitButton";
+import { EmailField } from "../../../components/form/EmailField";
+import { PasswordField } from "../../../components/form/PasswordField";
+import { SubmitButton } from "../../../components/form/SubmitButton";
 import { authApi } from "@/api";
 import { useState } from "react";
 import axios from "axios";

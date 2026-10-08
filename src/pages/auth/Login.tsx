@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/LoginForm";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import Banner from "../../data/images/foodBanner.jpeg"
 
 function Login() {

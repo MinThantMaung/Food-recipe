@@ -7,8 +7,8 @@ import myanmarCuisine from "../assets/Home/MyanmarCuisine.png";
 import thaiCuisine from "../assets/Home/ThaiCuisine.png";
 import italianCuisine from "../assets/Home/ItalianCuisine.png";
 import { ChefHat, Globe, Heart, Lightbulb, MessageCircle, Wrench } from "lucide-react";
-import type { Ingredient } from "./RecipeIngredients";
-import type { Instruction } from "./RecipesInstructions";
+import type { Ingredient } from "../features/recipes/components/detail/RecipeIngredients";
+import type { Instruction } from "../features/recipes/components/detail/RecipesInstructions";
 
 export const meals = [
   { title: "Breakfast", image: breakfastImage, category: "breakfast" },

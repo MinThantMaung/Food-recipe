@@ -1,3 +1,11 @@
+import { ArrowLeft } from "lucide-react";
+import {
+  Link,
+  useNavigation,
+  useActionData,
+  useSubmit,
+} from "react-router-dom";
+
 import {
   Card,
   CardContent,
@@ -5,21 +13,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Icons } from "../Icon";
-import {
-  Link,
-  useActionData,
-  useNavigation,
-  useSubmit,
-} from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { Icons } from "../../../components/Icon";
 import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { EmailField } from "../form/EmailField";
-import { SubmitButton } from "../form/SubmitButton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { EmailField } from "../../../components/form/EmailField";
+import { SubmitButton } from "../../../components/form/SubmitButton";
 
-const registerSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z
     .string()
     .min(1, {
@@ -32,25 +33,24 @@ const registerSchema = z.object({
     ),
 });
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
-export function RegisterForm() {
+export function ForgotPasswordForm() {
   const submit = useSubmit();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData() as { error?: string } | undefined;
 
-  const onSubmit = (values: RegisterFormValues) => {
+  const onSubmit = (values: ForgotPasswordFormValues) => {
     submit(values, { method: "post" });
   };
-
   return (
     <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
       <CardHeader className="gap-5">
@@ -70,11 +70,10 @@ export function RegisterForm() {
 
           <div className="space-y-1">
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Create your account
+              Reset Your Password
             </CardTitle>
             <CardDescription>
-              Enter your email address and we’ll send you a verification code to
-              get started.
+              Enter your email and we will send you a verification code to reset it.
             </CardDescription>
           </div>
         </div>
@@ -82,21 +81,23 @@ export function RegisterForm() {
 
       <CardContent>
         <form
-          className="space-y-5"
           onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5"
           noValidate
         >
-          <EmailField
-            id="email"
-            error={errors.email?.message}
-            {...register("email")}
-          />
+          <div className="space-y-2">
+            <EmailField
+              id="email"
+              error={errors.email?.message}
+              {...register("email")}
+            />
 
-          {actionData?.error && (
-            <p role="alert" className="text-sm text-destructive">
-              {actionData.error}
-            </p>
-          )}
+            {actionData?.error && (
+              <p role="alert" className="text-sm text-destructive">
+                {actionData.error}
+              </p>
+            )}
+          </div>
 
           <SubmitButton
             isSubmitting={isSubmitting}

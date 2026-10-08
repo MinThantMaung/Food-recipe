@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { ResetPasswordForm } from "@/features/auth/components/ResetPasswordForm";
 import registerBanner from "../../data/images/registerBanner.png";
 
 function ResetPassword() {

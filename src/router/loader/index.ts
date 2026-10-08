@@ -1,5 +1,5 @@
 import { authApi } from "@/api";
-import useAuthStore, { Status } from "@/stores/authStore";
+import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import axios from "axios";
 import { redirect } from "react-router";
 

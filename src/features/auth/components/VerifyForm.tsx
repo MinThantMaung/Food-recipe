@@ -14,22 +14,22 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Icons } from "../Icon";
+import { Icons } from "../../../components/Icon";
 import {
   Link,
   useActionData,
   useNavigation,
   useSubmit,
 } from "react-router-dom";
-import useAuthStore, { Status } from "@/stores/authStore";
+import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import { useEffect, useState } from "react";
 import { resendOtp } from "@/api/resendOtp";
 import axios from "axios";
-import { toast } from "../ui/toast";
+import { toast } from "../../../components/ui/toast";
 import z from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitButton } from "../form/SubmitButton";
+import { SubmitButton } from "../../../components/form/SubmitButton";
 
 const verifySchema = z.object({
   otp: z

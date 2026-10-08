@@ -1,5 +1,5 @@
 import registerBanner from "../../data/images/registerBanner.png";
-import { ConfirmPasswordForm } from "@/components/auth/ConfirmPasswordForm";
+import { ConfirmPasswordForm } from "@/features/auth/components/ConfirmPasswordForm";
 
 function ConfirmPassword() {
   return (

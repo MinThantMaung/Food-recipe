@@ -1,9 +1,9 @@
 import heroImage from "@/assets/Home/hero.png";
 import { Search } from "lucide-react";
-import { ButtonGroup } from "../ui/button-group";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+import { ButtonGroup } from "../../../components/ui/button-group";
+import { Input } from "../../../components/ui/input";
+import { Button } from "../../../components/ui/button";
+import { Badge } from "../../../components/ui/badge";
 import { useState } from "react";
 
 export const Hero = () => {
