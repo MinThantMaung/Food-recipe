@@ -1,6 +1,6 @@
-
 import { Link } from "react-router-dom";
-import { Clock, Star } from "lucide-react";
+import { Bookmark, Clock, Star } from "lucide-react";
+import { cn } from "cn";
 
 type FoodCardProps = {
   title: string;
@@ -35,15 +35,33 @@ export const FoodCard = ({
         focus-visible:outline-orange-500"
     >
       {/* Food image */}
-      <div className="aspect-4/3 overflow-hidden">
+      <div className="relative aspect-4/3 overflow-hidden">
         <img
           src={image}
           alt={title}
           loading="lazy"
           className="h-full w-full object-cover
-            transition-transform duration-300
-            motion-safe:group-hover:scale-105"
+      transition-transform duration-300
+      motion-safe:group-hover:scale-105"
         />
+
+        {/* Save Recipe Button */}
+        <button
+          type="button"
+          // onClick={handleSave}
+          // disabled={isSaving}
+          // aria-label={isSaved ? "Remove saved recipe" : "Save recipe"}
+          // aria-pressed={isSaved}
+          className="absolute right-3 top-3 z-10 flex size-9
+      cursor-pointer items-center justify-center
+      rounded-full bg-white/95 text-orange-500 shadow-sm
+      transition-colors hover:bg-orange-50
+      disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Bookmark className={cn("size-4", 
+            // isSaved && "fill-orange-500"
+            )} />
+        </button>
       </div>
 
       {/* Card content */}
@@ -68,25 +86,19 @@ export const FoodCard = ({
         <div
           className="flex items-center gap-2"
           aria-label={`Rated ${safeRating.toFixed(1)} out of 5 stars${
-            reviewCount !== undefined
-              ? ` from ${reviewCount} reviews`
-              : ""
+            reviewCount !== undefined ? ` from ${reviewCount} reviews` : ""
           }`}
         >
           <div aria-hidden="true" className="flex items-center gap-0.5">
             {Array.from({ length: 5 }, (_, index) => (
               <span key={index} className="relative">
-                <Star
-                  size={16}
-                  className="fill-gray-200 stroke-gray-200"
-                />
+                <Star size={16} className="fill-gray-200 stroke-gray-200" />
                 <span
                   className="absolute inset-0 overflow-hidden"
                   style={{
-                    width: `${Math.max(
-                      0,
-                      Math.min(1, safeRating - index)
-                    ) * 100}%`,
+                    width: `${
+                      Math.max(0, Math.min(1, safeRating - index)) * 100
+                    }%`,
                   }}
                 >
                   <Star
@@ -100,8 +112,7 @@ export const FoodCard = ({
 
           <span className="text-sm text-gray-500">
             {safeRating.toFixed(1)}
-            {reviewCount !== undefined &&
-              ` (${reviewCount})`}
+            {reviewCount !== undefined && ` (${reviewCount})`}
           </span>
         </div>
       </div>
