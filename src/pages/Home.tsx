@@ -5,7 +5,7 @@ import { MealCategories } from "@/features/auth/home/MealCategories";
 
 function Home() {
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto px-4 md:px-8">
       <Hero />
       <MealCategories />
       <FoodRecommendation />
