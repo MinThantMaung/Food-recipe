@@ -41,13 +41,11 @@ export const confirmLoader = async () => {
 export const homeLoader = async () => {
   try {
     const response = await authApi.get("auth-check");
-
     // Authenticated: allow Home to render
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      // Not authenticated: redirect to Login
-      return redirect("/login");
+      return null;
     }
 
     throw error;
