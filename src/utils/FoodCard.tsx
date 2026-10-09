@@ -2,12 +2,15 @@ import { Link } from "react-router-dom";
 import { Bookmark, Clock, Star } from "lucide-react";
 import { cn } from "cn";
 
-type FoodCardProps = {
+export type FoodCardProps = {
   title: string;
   image: string;
   to: string;
-  duration: string;
-  cuisine: string;
+  prepTime: number;
+  cookingTime: number;
+  country: {
+    cuisineName: string
+  },
   rating: number;
   reviewCount?: number;
 };
@@ -16,12 +19,16 @@ export const FoodCard = ({
   title,
   image,
   to,
-  duration,
-  cuisine,
+  prepTime,
+  cookingTime,
+  country,
   rating,
   reviewCount,
 }: FoodCardProps) => {
   const safeRating = Math.max(0, Math.min(5, rating));
+  const duration = prepTime + cookingTime;
+
+  const imgUrl = import.meta.env.VITE_CDN_URL;
 
   return (
     <Link
@@ -37,7 +44,7 @@ export const FoodCard = ({
       {/* Food image */}
       <div className="relative aspect-4/3 overflow-hidden">
         <img
-          src={image}
+          src={`${imgUrl}/${image}`}
           alt={title}
           loading="lazy"
           className="h-full w-full object-cover
@@ -58,9 +65,12 @@ export const FoodCard = ({
       transition-colors hover:bg-orange-50
       disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Bookmark className={cn("size-4", 
-            // isSaved && "fill-orange-500"
-            )} />
+          <Bookmark
+            className={cn(
+              "size-4",
+              // isSaved && "fill-orange-500"
+            )}
+          />
         </button>
       </div>
 
@@ -78,7 +88,7 @@ export const FoodCard = ({
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Clock size={16} className="shrink-0" />
           <span>
-            {cuisine} · {duration}
+            {country.cuisineName} · {duration} min
           </span>
         </div>
 
