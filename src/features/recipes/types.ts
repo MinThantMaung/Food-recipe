@@ -1,7 +1,11 @@
 
-import type { recipesItems } from "@/utils/items";
+import type { FoodCardProps } from "@/utils/FoodCard";
 
-export type Recipe = (typeof recipesItems)[number];
+export type Recipe = Omit<FoodCardProps, "to"> & {
+  id: number;
+  meal: string[];
+  diets: string[];
+};
 
 export type RecipeFilterId =
   | "meal"
