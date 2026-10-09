@@ -1,15 +1,20 @@
 import { Check } from "lucide-react";
 
-export type Ingredient = {
+export type RecipeIngredient = {
   id: number;
-  name: string;
-  quantity?: number;
-  unit?: string;
-  note?: string;
+  quantity: string | null;
+  quantityText: string | null;
+  unit: string | null;
+  preparation: string | null;
+  ingredient: {
+    id: number;
+    name: string;
+    image: string | null;
+  };
 };
 
 type RecipeIngredientsProps = {
-  ingredients: Ingredient[];
+  ingredients: RecipeIngredient[];
   serving: number;
   originalServings: number;
 };
@@ -24,15 +29,20 @@ export function RecipeIngredients({
   return (
     <div className="flex flex-1 flex-col">
       <div>
-        {ingredients.map((ingredient) => {
+        {ingredients.map((item) => {
           const quantity =
-            ingredient.quantity !== undefined
-              ? Number((ingredient.quantity * multiplier).toFixed(2))
+            item.quantity !== null
+              ? Number((Number(item.quantity) * multiplier).toFixed(2))
               : undefined;
+
+          const amount =
+            quantity !== undefined
+              ? `${quantity}${item.unit ? ` ${item.unit}` : ""}`
+              : (item.quantityText ?? "");
 
           return (
             <label
-              key={ingredient.id}
+              key={item.id}
               className="flex cursor-pointer items-start gap-2"
             >
               <span className="relative mt-4 size-4 shrink-0">
@@ -49,23 +59,28 @@ export function RecipeIngredients({
               </span>
 
               <div className="flex min-w-0 flex-1 justify-between gap-4 border-b border-gray-100 py-3 text-sm sm:text-base">
-                <span className="text-gray-800">{ingredient.name}</span>
+                <div className="flex min-w-0 gap-1 md:gap-2">
+                  <span className="text-gray-800">
+                    {item.ingredient.name}
+                  </span>
 
-                <span className="shrink-0 text-gray-600">
-                  {quantity !== undefined
-                    ? `${quantity}${
-                        ingredient.unit ? ` ${ingredient.unit}` : ""
-                      }`
-                    : ingredient.note}
-                </span>
+                  {item.preparation && (
+                    <p className="mt-1 text-xs text-gray-500">
+                      ({item.preparation})
+                    </p>
+                  )}
+                </div>
+
+                <span className="shrink-0 text-gray-600">{amount}</span>
               </div>
             </label>
           );
         })}
-        <p className="mt-auto pt-8 text-sm leading-relaxed text-gray-500">
-          Ingredient amounts scale with servings. Cooking times stay the same.
-        </p>
       </div>
+
+      <p className="mt-auto pt-8 text-sm leading-relaxed text-gray-500">
+        Ingredient amounts scale with servings. Cooking times stay the same.
+      </p>
     </div>
   );
 }
