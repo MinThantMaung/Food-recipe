@@ -1,8 +1,9 @@
 export type Instruction = {
   id: number;
-  step: number;
+  recipeId: number;
+  stepNumber: number;
   title: string;
-  description: string;
+  instruction: string;
 };
 
 type RecipesInstructionsProps = {
@@ -21,7 +22,7 @@ export function RecipesInstructions({
             className="flex items-start gap-3 border-b border-gray-100 py-5 last:border-b-0 last:pb-0 md:gap-4"
           >
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-orange-500 text-sm font-bold text-white md:size-10 md:text-base">
-              {instruction.step}
+              {instruction.stepNumber}
             </span>
 
             <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1">
@@ -30,7 +31,7 @@ export function RecipesInstructions({
               </h3>
 
               <p className="text-sm leading-relaxed text-gray-600 md:text-base">
-                {instruction.description}
+                {instruction.instruction}
               </p>
             </div>
           </li>
