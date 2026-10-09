@@ -82,8 +82,9 @@ function Recipes() {
                   title={recipe.title}
                   image={recipe.image}
                   to={`/recipes/${recipe.id}`}
-                  duration={`${recipe.duration} min`}
-                  cuisine={recipe.cuisine}
+                  prepTime={recipe.prepTime}
+                  cookingTime={recipe.cookingTime}
+                  country={recipe.country}
                   rating={recipe.rating}
                   reviewCount={recipe.reviewCount}
                 />
