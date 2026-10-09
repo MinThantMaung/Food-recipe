@@ -1,11 +1,33 @@
 import { RecipeIngredients } from "@/features/recipes/components/detail/RecipeIngredients";
-import { ingredients, instructions } from "@/utils/items";
 import { ButtonGroupSplit } from "@/features/recipes/components/detail/ServingButton";
 import { RecipesInstructions } from "@/features/recipes/components/detail/RecipesInstructions";
 
+type RecipeInstructionData = {
+  servings: number;
+  recipeIngredients: {
+    id: number;
+    quantity: string | null;
+    quantityText: string | null;
+    unit: string | null;
+    preparation: string | null;
+    ingredient: {
+      id: number;
+      name: string;
+      image: string | null;
+    };
+  }[];
+  recipeSteps: {
+    id: number;
+    stepNumber: number;
+    recipeId: number;
+    title: string | null;
+    instruction: string;
+  }[];
+};
+
 type RecipesDetailsInstructionProps = {
   serving: number;
-  originalServing: number;
+  recipe: RecipeInstructionData;
   onIncrease: () => void;
   onDecrease: () => void;
   onServingChange: (value: number) => void;
@@ -13,14 +35,14 @@ type RecipesDetailsInstructionProps = {
 
 export function RecipesDetailsInstruction({
   serving,
-  originalServing,
+  recipe,
   onIncrease,
   onDecrease,
   onServingChange,
 }: RecipesDetailsInstructionProps) {
-  const isAdjusted = serving !== originalServing;
+  const isAdjusted = serving !== recipe.servings;
   const handleReset = () => {
-    onServingChange(originalServing);
+    onServingChange(recipe.servings);
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -45,7 +67,7 @@ export function RecipesDetailsInstruction({
 
             <div className="mt-2 flex items-center justify-between gap-3">
               <p className="text-sm text-gray-600">
-                Original recipe serves {originalServing}
+                Original recipe serves {recipe.servings}
               </p>
 
               <button
@@ -59,16 +81,16 @@ export function RecipesDetailsInstruction({
           </div>
         )}
         <RecipeIngredients
-          ingredients={ingredients}
+          ingredients={recipe.recipeIngredients}
           serving={serving}
-          originalServings={originalServing}
+          originalServings={recipe.servings}
         />
       </div>
       <div className="rounded-xl border border-gray-100 bg-white p-4 md:p-6">
         <h2 className="font-bold text-xl md:text-2xl tracking-tight">
           Instruction
         </h2>
-        <RecipesInstructions instructions={instructions} />
+        <RecipesInstructions instructions={recipe.recipeSteps} />
       </div>
     </div>
   );
