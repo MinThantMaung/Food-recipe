@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import { recipesItems } from "@/utils/items";
 import { SORT_OPTIONS } from "../types";
 import type { RecipeSort } from "../types";
 
@@ -11,10 +10,12 @@ import {
   sortRecipes,
   paginateRecipes,
 } from "../utils/recipeUtils";
+import { useGetRecipesCardList } from "@/api/useRecipes";
 
 const PAGE_SIZE = 9;
 
 export function useRecipeQuery() {
+  const { data: recipes = [] } = useGetRecipesCardList();
   const [searchParams, setSearchParams] =
     useSearchParams();
 
@@ -44,7 +45,7 @@ export function useRecipeQuery() {
     )?.value ?? "recommended";
 
   // 1. Filter
-  const filteredRecipes = filterRecipes(recipesItems, {
+  const filteredRecipes = filterRecipes(recipes, {
     search: searchQuery,
     meals: selectedMeals,
     cuisines: selectedCuisines,
