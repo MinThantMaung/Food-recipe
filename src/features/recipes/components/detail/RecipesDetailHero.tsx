@@ -13,15 +13,22 @@ import { Link } from "react-router-dom";
 type RecipesDetailHeroProps = {
   recipe: {
     title: string;
-    cuisine: string;
-    rating: number;
+    description: string | null;
+    country: {
+      cuisineName: string | null;
+    };
+    rating?: number | null;
     reviewCount?: number;
-    image: string;
+    image: string | null;
   };
 };
 
 export function RecipesDetailsHero({ recipe }: RecipesDetailHeroProps) {
-  const safeRating = Math.max(0, Math.min(5, recipe.rating));
+  const rating = recipe.rating ?? 0;
+  const safeRating = Number.isFinite(rating)
+    ? Math.max(0, Math.min(5, rating))
+    : 0;
+  const imgUrl = import.meta.env.VITE_CDN_URL;
   return (
     <div className="space-y-6 md:space-y-8">
       {/* Heading */}
@@ -47,16 +54,14 @@ export function RecipesDetailsHero({ recipe }: RecipesDetailHeroProps) {
       </h1>
       {/* Description */}
       <p className="max-w-3xl text-sm leading-7 text-gray-500 sm:text-base">
-        A comforting and flavorful Japanese curry with tender chicken, potatos
-        and carrots in a rich, mildly spiced sauce. Perfect with steaming hot
-        rice.
+        {recipe.description}
       </p>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <Badge
           variant="ghost"
           className="rounded-full bg-orange-100 px-3 py-1 text-sm font-medium text-orange-600"
         >
-          {recipe.cuisine}
+          {recipe.country.cuisineName}
         </Badge>
         {/* Cuisine and rating */}
         <div
@@ -99,7 +104,7 @@ export function RecipesDetailsHero({ recipe }: RecipesDetailHeroProps) {
       </div>
       <div>
         <img
-          src={recipe.image}
+          src={`${imgUrl}/${recipe.image}`}
           alt={recipe.title}
           className="aspect-4/3 w-full rounded-2xl object-cover object-center md:aspect-16/7"
           fetchPriority="high"
