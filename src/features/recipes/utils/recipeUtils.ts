@@ -1,9 +1,4 @@
-
-import type {
-  Recipe,
-  RecipeFilterValues,
-  RecipeSort,
-} from "../types";
+import type { Recipe, RecipeFilterValues, RecipeSort } from "../types";
 
 // Match recipe duration
 export const matchesTimeFilter = (
@@ -36,33 +31,25 @@ export const filterRecipes = (
   const search = filters.search.trim().toLowerCase();
 
   return recipes.filter((recipe) => {
-    const matchesSearch = recipe.title
-      .toLowerCase()
-      .includes(search);
+    const matchesSearch = recipe.title.toLowerCase().includes(search);
 
     const matchesCuisine =
       filters.cuisines.length === 0 ||
-      filters.cuisines.includes(
-        recipe.cuisine.toLowerCase(),
-      );
+      filters.cuisines.includes(recipe.cuisine.toLowerCase());
 
     const matchesMeal =
       filters.meals.length === 0 ||
-      recipe.meal.some((meal) =>
-        filters.meals.includes(meal.toLowerCase()),
-      );
+      recipe.meal.some((meal) => filters.meals.includes(meal.toLowerCase()));
 
     const matchesTime = matchesTimeFilter(
-      recipe.duration,
+      recipe.prepTime + recipe.cookingTime,
       filters.totalTime,
     );
 
     // Every selected dietary requirement must match
     const matchesDiet =
       filters.diets.length === 0 ||
-      filters.diets.every((diet) =>
-        recipe.diets.includes(diet),
-      );
+      filters.diets.every((diet) => recipe.diets.includes(diet));
 
     return (
       matchesSearch &&
@@ -85,13 +72,13 @@ export const sortRecipes = (
         return b.rating - a.rating;
 
       case "MostPopular":
-        return b.reviewCount - a.reviewCount;
+        return (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
 
       case "ShortestTime":
-        return a.duration - b.duration;
+        return a.prepTime + a.cookingTime - (b.prepTime + b.cookingTime);
 
       case "LongestTime":
-        return b.duration - a.duration;
+        return b.prepTime + b.cookingTime - (a.prepTime + a.cookingTime);
 
       case "Asc":
         return a.title.localeCompare(b.title);
