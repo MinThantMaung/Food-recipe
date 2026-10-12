@@ -61,7 +61,7 @@ export const FoodRecommendation = ({recipes} : FoodRecommendationProps) => {
             to={`/recipes/${recipe.id}`}
             prepTime={recipe.prepTime}
             cookingTime={recipe.cookingTime}
-            cuisine={recipe.country.cuisineName}
+            country={recipe.country}
             rating={recipe.rating}
             reviewCount={recipe.reviewCount}
           />
