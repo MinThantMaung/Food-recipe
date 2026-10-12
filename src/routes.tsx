@@ -8,7 +8,6 @@ import RegisterPage from "./pages/auth/Register.tsx";
 import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
 import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
 import ForgotPasswordPage from "./pages/auth/ForgotPassword.tsx";
-import ResetPasswordPage from "./pages/auth/ResetPassword.tsx";
 import {
   confirmPasswordAction,
   forgotPasswordAction,
@@ -31,6 +30,7 @@ import AboutPage from "./pages/About.tsx";
 import PrivacyPage from "./pages/Privacy.tsx";
 import ContantPage from "./pages/Contact.tsx";
 import RecipeDetailPage from "./pages/RecipeDeatil.tsx";
+import ResetPassword from "./pages/auth/resetPassword.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -117,7 +117,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "reset-password",
-        element: <ResetPasswordPage />,
+        element: <ResetPassword />,
         loader: confirmLoader,
         action: resetPasswordAction,
       },
