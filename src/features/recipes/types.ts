@@ -3,8 +3,13 @@ import type { FoodCardProps } from "@/utils/FoodCard";
 
 export type Recipe = Omit<FoodCardProps, "to"> & {
   id: number;
-  meal: string[];
-  diets: string[];
+  recipeCategories: {
+    category: {
+      id: number;
+      name: string;
+      type: "MEAL" | "DIET" | "COOKING_METHOD" | "OCCASION";
+    };
+  }[];
 };
 
 export type RecipeFilterId =
