@@ -1,4 +1,8 @@
-import type { Recipe, RecipeFilterValues, RecipeSort } from "../types";
+import type {
+  Recipe,
+  RecipeFilterValues,
+  RecipeSort,
+} from "../types";
 
 // Match recipe duration
 export const matchesTimeFilter = (
@@ -30,26 +34,59 @@ export const filterRecipes = (
 ): Recipe[] => {
   const search = filters.search.trim().toLowerCase();
 
+  const selectedMeals = filters.meals.map((value) =>
+    value.toLowerCase(),
+  );
+  const selectedCuisines = filters.cuisines.map((value) =>
+    value.toLowerCase(),
+  );
+  const selectedDiets = filters.diets.map((value) =>
+    value.toLowerCase(),
+  );
+
   return recipes.filter((recipe) => {
-    const matchesSearch = recipe.title.toLowerCase().includes(search);
+    const categories = recipe.recipeCategories.map(
+      (item) => item.category,
+    );
+
+    const matchesSearch = recipe.title
+      .toLowerCase()
+      .includes(search);
+
+    const cuisineName =
+      recipe.country.cuisineName?.toLowerCase() ?? "";
 
     const matchesCuisine =
-      filters.cuisines.length === 0 ||
-      filters.cuisines.includes(recipe.cuisine.toLowerCase());
+      selectedCuisines.length === 0 ||
+      selectedCuisines.includes(cuisineName);
 
+    // Match any selected meal
     const matchesMeal =
-      filters.meals.length === 0 ||
-      recipe.meal.some((meal) => filters.meals.includes(meal.toLowerCase()));
+      selectedMeals.length === 0 ||
+      categories.some(
+        (category) =>
+          category.type === "MEAL" &&
+          selectedMeals.includes(category.name.toLowerCase()),
+      );
+
+    const duration =
+      (recipe.prepTime ?? 0) + (recipe.cookingTime ?? 0);
 
     const matchesTime = matchesTimeFilter(
-      recipe.prepTime + recipe.cookingTime,
+      duration,
       filters.totalTime,
     );
 
-    // Every selected dietary requirement must match
+    // Match every selected dietary requirement
     const matchesDiet =
-      filters.diets.length === 0 ||
-      filters.diets.every((diet) => recipe.diets.includes(diet));
+      selectedDiets.length === 0 ||
+      selectedDiets.every((diet) =>
+        categories.some(
+          (category) =>
+            category.type === "DIET" &&
+            category.name.toLowerCase() === diet,
+        ),
+      );
 
     return (
       matchesSearch &&
@@ -69,16 +106,24 @@ export const sortRecipes = (
   return [...recipes].sort((a, b) => {
     switch (sortBy) {
       case "HighestRated":
-        return b.rating - a.rating;
+        return (b.rating ?? 0) - (a.rating ?? 0);
 
       case "MostPopular":
         return (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
 
       case "ShortestTime":
-        return a.prepTime + a.cookingTime - (b.prepTime + b.cookingTime);
+        return (
+          (a.prepTime ?? 0) +
+          (a.cookingTime ?? 0) -
+          ((b.prepTime ?? 0) + (b.cookingTime ?? 0))
+        );
 
       case "LongestTime":
-        return b.prepTime + b.cookingTime - (a.prepTime + a.cookingTime);
+        return (
+          (b.prepTime ?? 0) +
+          (b.cookingTime ?? 0) -
+          ((a.prepTime ?? 0) + (a.cookingTime ?? 0))
+        );
 
       case "Asc":
         return a.title.localeCompare(b.title);
