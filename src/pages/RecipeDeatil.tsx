@@ -13,9 +13,6 @@ function RecipeDetail() {
 
   const { data: recipe, isLoading, isError } = useGetRecipeDetail(id);
 
-  if (!recipe) {
-    return <p>Recipe not found.</p>;
-  }
   const increaseServing = () => {
     setServing((prev) => prev + 1);
   };
