@@ -83,7 +83,7 @@ export const Hero = () => {
       <div className="relative min-w-0">
         <div
           aria-hidden="true"
-          className="absolute -inset-3 rounded-[2rem] bg-orange-50 sm:-inset-4"
+          className="absolute -inset-3 rounded-[2rem] sm:-inset-4"
         />
 
         <div className="relative overflow-hidden rounded-2xl shadow-lg shadow-orange-950/10">
