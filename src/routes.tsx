@@ -1,13 +1,8 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 
 import RootLayout from "./pages/RootLayout";
-import AuthRootLayout from "./pages/AuthRootLayout.tsx";
 import Home from "./pages/Home";
-import LoginPage from "./pages/auth/Login.tsx";
-import RegisterPage from "./pages/auth/Register.tsx";
-import VerifyOtpPage from "./pages/auth/VerifyOtp.tsx";
-import ConfirmPasswordPage from "./pages/auth/ConfirmPassword.tsx";
-import ForgotPasswordPage from "./pages/auth/ForgotPassword.tsx";
+
 import {
   confirmPasswordAction,
   forgotPasswordAction,
@@ -18,19 +13,12 @@ import {
   verifyOtpAction,
   verifyOtpPasswordAction,
 } from "./router/action/index.ts";
+
 import {
   confirmLoader,
-  homeLoader,
   loginLoader,
   otpLoader,
 } from "./router/loader/index.ts";
-import RecipesPage from "./pages/Recipes.tsx";
-import CuisinePage from "./pages/Cuisines.tsx";
-import AboutPage from "./pages/About.tsx";
-import PrivacyPage from "./pages/Privacy.tsx";
-import ContantPage from "./pages/Contact.tsx";
-import RecipeDetailPage from "./pages/RecipeDeatil.tsx";
-import ResetPassword from "./pages/auth/resetPassword.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -41,85 +29,143 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
-        loader: homeLoader
       },
       {
         path: "recipes",
-        element: <RecipesPage />,
+        lazy: async () => {
+          const mod = await import("./pages/Recipes.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "recipes/:recipeId",
-        element: <RecipeDetailPage />,
+        lazy: async () => {
+          const mod = await import("./pages/RecipeDeatil.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "cuisines",
-        element: <CuisinePage />,
+        lazy: async () => {
+          const mod = await import("./pages/Cuisines.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "about",
-        element: <AboutPage />,
+        lazy: async () => {
+          const mod = await import("./pages/About.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "privacy",
-        element: <PrivacyPage />,
+        lazy: async () => {
+          const mod = await import("./pages/Privacy.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "contact",
-        element: <ContantPage />,
+        lazy: async () => {
+          const mod = await import("./pages/Contact.tsx");
+          return { Component: mod.default };
+        },
+      },
+      {
+        path: "profile",
+        lazy: async () => {
+          const mod = await import("./pages/Profile.tsx");
+          return { Component: mod.default };
+        },
+      },
+      {
+        path: "setting",
+        lazy: async () => {
+          const mod = await import("./pages/Setting.tsx");
+          return { Component: mod.default };
+        },
       },
     ],
   },
   {
     path: "/login",
-    element: <LoginPage />,
     loader: loginLoader,
     action: loginAction,
+    lazy: async () => {
+      const mod = await import("./pages/auth/Login.tsx");
+      return { Component: mod.default };
+    },
   },
   {
     path: "/register",
-    element: <AuthRootLayout />,
+    lazy: async () => {
+      const mod = await import("./pages/AuthRootLayout.tsx");
+      return { Component: mod.default };
+    },
     children: [
       {
         index: true,
-        element: <RegisterPage />,
         loader: loginLoader,
         action: registerAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/Register.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "verify-otp",
-        element: <VerifyOtpPage />,
         loader: otpLoader,
         action: verifyOtpAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/VerifyOtp.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "confirm-password",
-        element: <ConfirmPasswordPage />,
         loader: confirmLoader,
         action: confirmPasswordAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/ConfirmPassword.tsx");
+          return { Component: mod.default };
+        },
       },
     ],
   },
   {
     path: "/forgot-password",
-    element: <AuthRootLayout />,
+    lazy: async () => {
+      const mod = await import("./pages/AuthRootLayout.tsx");
+      return { Component: mod.default };
+    },
     children: [
       {
         index: true,
-        element: <ForgotPasswordPage />,
         loader: loginLoader,
         action: forgotPasswordAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/ForgotPassword.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "verify",
-        element: <VerifyOtpPage />,
         loader: otpLoader,
         action: verifyOtpPasswordAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/VerifyOtp.tsx");
+          return { Component: mod.default };
+        },
       },
       {
         path: "reset-password",
-        element: <ResetPassword />,
         loader: confirmLoader,
         action: resetPasswordAction,
+        lazy: async () => {
+          const mod = await import("./pages/auth/ResetPassword.tsx");
+          return { Component: mod.default };
+        },
       },
     ],
   },
