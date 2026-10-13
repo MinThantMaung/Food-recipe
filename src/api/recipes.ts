@@ -1,7 +1,10 @@
 /* eslint-disable no-useless-catch */
+import type { RecipeFilterOptions } from "@/features/recipes/types";
 import api from ".";
-
-
+type RecipeFiltersResponse = {
+  message: string;
+  data: RecipeFilterOptions;
+};
 
 export const getRecipesCard = async () => {
     try {
@@ -48,3 +51,18 @@ export const getDiets = async () => {
         throw e;
     }
 }
+export const getRecipesByMeal = async () => {
+    try {
+        const res = await api.get(`cuisinesByMeal`)
+        return res.data.data;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const getRecipeFilters = async (): Promise<RecipeFilterOptions> => {
+  const response =
+    await api.get<RecipeFiltersResponse>("recipe-filters");
+
+  return response.data.data;
+};
