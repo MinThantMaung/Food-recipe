@@ -1,21 +1,24 @@
 import { Link } from "react-router-dom";
 
-type MealCardProps = {
+type MenuCardProps = {
   title: string;
   image: string;
   to: string;
 };
 
-export const MenuCard = ({ title, image, to }: MealCardProps) => {
+export const MenuCard = ({ title, image, to }: MenuCardProps) => {
+  const cdnUrl = import.meta.env.VITE_CDN_URL.replace(/\/+$/, "");
+  const imagePath = image.replace(/^\/+/, "");
   return (
     <Link
       to={to}
       className="group relative isolate block h-40 overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-4 sm:h-48 lg:h-52"
     >
       <img
-        src={image}
+        src={`${cdnUrl}/${imagePath}`}
         alt=""
         loading="lazy"
+        decoding="async"
         className="absolute inset-0 z-0 h-full w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
       />
 

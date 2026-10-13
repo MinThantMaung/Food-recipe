@@ -10,12 +10,27 @@ import {
   sortRecipes,
   paginateRecipes,
 } from "../utils/recipeUtils";
-import { useGetRecipesCardList } from "@/api/useRecipes";
+import { useGetRecipeFilters, useGetRecipesCardList } from "@/api/useRecipes";
 
 const PAGE_SIZE = 9;
 
 export function useRecipeQuery() {
-  const { data: recipes = [] } = useGetRecipesCardList();
+  //const { data: recipes = [] } = useGetRecipesCardList();
+  const recipesQuery = useGetRecipesCardList();
+  const filtersQuery = useGetRecipeFilters();
+
+  const recipes = recipesQuery.data ?? [];
+
+  const cuisines = filtersQuery.data?.cuisines ?? [];
+  const meals = filtersQuery.data?.meals ?? [];
+  const diets = filtersQuery.data?.diets ?? [];
+
+  const isLoading =
+    recipesQuery.isLoading || filtersQuery.isLoading;
+
+  const isError =
+    recipesQuery.isError || filtersQuery.isError;
+
   const [searchParams, setSearchParams] =
     useSearchParams();
 
@@ -173,18 +188,37 @@ export function useRecipeQuery() {
     return query ? `?${query}` : "/recipes";
   };
 
-  return {
-    searchQuery,
-    searchParams,
-    filteredRecipes,
-    paginatedRecipes,
-    sortBy,
-    page,
-    totalPages,
+  // return {
+  //   searchQuery,
+  //   searchParams,
+  //   filteredRecipes,
+  //   paginatedRecipes,
+  //   sortBy,
+  //   page,
+  //   totalPages,
 
-    handleSearchChange,
-    handleFilterChange,
-    handleSortChange,
-    getPageUrl,
-  };
+  //   handleSearchChange,
+  //   handleFilterChange,
+  //   handleSortChange,
+  //   getPageUrl,
+  // };
+  return {
+  isLoading,
+  isError,
+  cuisines,
+  meals,
+  diets,
+
+  searchQuery,
+  searchParams,
+  filteredRecipes,
+  paginatedRecipes,
+  sortBy,
+  page,
+  totalPages,
+  handleSearchChange,
+  handleFilterChange,
+  handleSortChange,
+  getPageUrl,
+};
 }

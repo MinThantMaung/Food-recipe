@@ -6,12 +6,12 @@ type ReviewCardProps = {
 };
 
 export const ReviewCard = ({ review }: ReviewCardProps) => {
-  const fullname = review.user.firstName + review.user.lastName;
+  const fullname = [review.user.firstName, review.user.lastName].filter(Boolean).join(" ") || "Recipe member";
   return (
     <article className="flex items-start gap-3 border-b border-gray-100 py-4 first:pt-0 last:border-b-0 last:pb-0 md:gap-4">
       {/* Avatar */}
-      <img
-        src={review.user.image}
+      <img 
+        src={review.user.image ?? undefined}
         alt={fullname}
         loading="lazy"
         className="size-10 shrink-0 rounded-full object-cover md:size-14"

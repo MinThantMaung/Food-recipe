@@ -14,6 +14,7 @@ export const CuisineCard = ({
   image,
   to,
 }: CuisineCardProps) => {
+  const imgUrl = import.meta.env.VITE_CDN_URL;
   return (
     <Link
       to={to}
@@ -28,7 +29,7 @@ export const CuisineCard = ({
       {/* Image */}
       <div className="aspect-video overflow-hidden">
         <img
-          src={image}
+          src={`${imgUrl}/${image}`}
           alt={title}
           loading="lazy"
           className="h-full w-full object-cover
