@@ -68,7 +68,7 @@ export function RecipesReview({ reviews }: RecipesReviewsProps) {
           <div className="flex items-center gap-3">
             <Avatar className="size-10">
               <AvatarImage
-                src={user.image}
+                src={user.image ?? undefined}
                 alt={user.username || "Your profile"}
               />
               <AvatarFallback>
