@@ -1,24 +1,32 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CuisineCard } from "@/utils/CuisineCard";
-import { cuisinesPageItem } from "@/utils/items";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useGetCuisines } from "@/api/useRecipes";
 
-const continents = [
-  "All",
-  "Asia",
-  "Europe",
-  "Africa",
-  "Americas",
-  "Oceania",
-];
+const continents = ["All", "Asia", "Europe", "Africa", "Americas", "Oceania"];
+
+type CuisineType = {
+  id: number;
+  cuisineName: string | null;
+  description: string | null;
+  image: string;
+  continent: {
+    id: number;
+    name: string;
+  };
+};
+
+type NamedCuisine = CuisineType & {
+  cuisineName: string;
+};
 
 function Cuisine() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedContinent, setSelectedContinent] =
-    useState("All");
+  const [selectedContinent, setSelectedContinent] = useState("All");
+  const { data } = useGetCuisines();
+  const cuisines: CuisineType[] = data ?? [];
 
   // Handle continent selection
   const handleContinentChange = (continent: string) => {
@@ -26,17 +34,19 @@ function Cuisine() {
   };
 
   // Filter cuisines based on search and continent
-  const filteredCuisines = cuisinesPageItem.filter((cuisine) => {
-    const matchesSearch = cuisine.title
-      .toLowerCase()
-      .includes(searchQuery.trim().toLowerCase());
+  const filteredCuisines = cuisines
+    .filter((cuisine): cuisine is NamedCuisine => cuisine.cuisineName !== null)
+    .filter((cuisine) => {
+      const matchesSearch = cuisine.cuisineName
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase());
 
-    const matchesContinent =
-      selectedContinent === "All" ||
-      cuisine.continent === selectedContinent;
+      const matchesContinent =
+        selectedContinent === "All" ||
+        cuisine.continent.name === selectedContinent;
 
-    return matchesSearch && matchesContinent;
-  });
+      return matchesSearch && matchesContinent;
+    });
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -47,8 +57,8 @@ function Cuisine() {
         </h1>
 
         <p className="mx-auto mt-3 max-w-xl text-gray-500">
-          Discover diverse cuisines, rich traditions and
-          unforgettable dishes from every corner of the globe.
+          Discover diverse cuisines, rich traditions and unforgettable dishes
+          from every corner of the globe.
         </p>
       </div>
 
@@ -104,22 +114,17 @@ function Cuisine() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filteredCuisines.map((cuisine) => (
             <CuisineCard
-              key={cuisine.cuisine}
-              title={cuisine.title}
-              description={cuisine.description}
+              key={cuisine.id}
+              title={cuisine.cuisineName}
+              description={cuisine.description ?? ""}
               image={cuisine.image}
-              to={`/recipes?cuisine=${encodeURIComponent(
-                cuisine.cuisine
-              )}`}
+              to={`/recipes?cuisine=${encodeURIComponent(cuisine.cuisineName)}`}
             />
           ))}
         </div>
       ) : (
         <div className="py-16 text-center">
-          <Search
-            size={32}
-            className="mx-auto mb-4 text-gray-400"
-          />
+          <Search size={32} className="mx-auto mb-4 text-gray-400" />
 
           <h3 className="text-lg font-semibold text-gray-950">
             No cuisines found

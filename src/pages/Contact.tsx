@@ -44,7 +44,7 @@ function Contact() {
   const {
   register,
   handleSubmit,
-  reset,
+  // reset,
   formState: { errors, isSubmitting },
 } = useForm<ContactFormValues>({
   resolver: zodResolver(contactSchema),
