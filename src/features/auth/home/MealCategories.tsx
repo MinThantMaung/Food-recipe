@@ -1,7 +1,16 @@
-import { meals } from "@/utils/items";
 import { MenuCard } from "@/utils/MenuCard";
 
-export const MealCategories = () => {
+export type RecipeCard = {
+  id: number;
+  name: string;
+  image: string;
+};
+
+type mealsProps = {
+  meals: RecipeCard[];
+};
+
+export const MealCategories = ({meals} : mealsProps) => {
   return (
     <section className="mx-auto max-w-6xl py-8">
       <h2 className="mb-5 text-2xl font-bold text-gray-950">
@@ -9,12 +18,12 @@ export const MealCategories = () => {
       </h2>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {meals.map((meal) => (
+        {meals.slice(0,4).map((meal) => (
           <MenuCard
-            key={meal.category}
-            title={meal.title}
+            key={meal.id}
+            title={meal.name}
             image={meal.image}
-            to={`/recipes?meal=${encodeURIComponent(meal.category.toLowerCase())}`}
+            to={`/recipes?meal=${encodeURIComponent(meal.name.toLowerCase())}`}
           />
         ))}
       </div>
