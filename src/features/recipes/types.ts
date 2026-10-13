@@ -39,3 +39,19 @@ export type RecipeFilterValues = {
   diets: string[];
   totalTime: string | null;
 };
+
+export type CategoryFilterOption = {
+  id: number;
+  name: string;
+};
+
+export type CuisineFilterOption = {
+  id: number;
+  cuisineName: string | null;
+};
+
+export type RecipeFilterOptions = {
+  cuisines: CuisineFilterOption[];
+  meals: CategoryFilterOption[];
+  diets: CategoryFilterOption[];
+};
