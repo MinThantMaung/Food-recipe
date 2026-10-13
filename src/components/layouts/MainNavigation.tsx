@@ -78,7 +78,7 @@ export default function MainNavigation() {
             render={
               <Button variant="ghost" size="icon" className="rounded-full">
                 <Avatar>
-                  <AvatarImage src={user.image} alt="shadcn" />
+                  <AvatarImage src={user.image ?? undefined} alt="Profile" />
                   <AvatarFallback>
                     {user.username?.trim().charAt(0).toUpperCase() || "F"}
                   </AvatarFallback>

@@ -84,9 +84,25 @@ export function VerifyForm() {
   const otpError = errors.otp?.message ?? actionData?.error;
 
   const onSubmit = (values: VerifyFormValues) => {
+    if (!email) {
+      toast.add({
+        title: "Email is missing",
+        description: "Please go back to registration and enter your email.",
+        type: "error",
+      });
+      return;
+    }
     submit({ otp: values.otp, email, token }, { method: "post" });
   };
   const resendEmail = async () => {
+    if (!email || !token) {
+      toast.add({
+        title: "Verification session is missing",
+        description: "Please go back to registration and start again.",
+        type: "error",
+      });
+      return;
+    }
     setIsResending(true);
 
     try {
