@@ -2,7 +2,7 @@ export type Instruction = {
   id: number;
   recipeId: number;
   stepNumber: number;
-  title: string;
+  title: string | null;
   instruction: string;
 };
 
@@ -26,9 +26,11 @@ export function RecipesInstructions({
             </span>
 
             <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1">
-              <h3 className="font-bold tracking-tight text-gray-800 md:text-lg">
-                {instruction.title}
-              </h3>
+              {instruction.title && (
+                <h3 className="font-bold tracking-tight text-gray-800 md:text-lg">
+                  {instruction.title}
+                </h3>
+              )}
 
               <p className="text-sm leading-relaxed text-gray-600 md:text-base">
                 {instruction.instruction}
