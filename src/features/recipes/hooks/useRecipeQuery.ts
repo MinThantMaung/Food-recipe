@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLoaderData, useSearchParams } from "react-router-dom";
 
 import { SORT_OPTIONS } from "../types";
 import type { RecipeSort } from "../types";
@@ -10,29 +9,18 @@ import {
   sortRecipes,
   paginateRecipes,
 } from "../utils/recipeUtils";
-import { useGetRecipeFilters, useGetRecipesCardList } from "@/api/useRecipes";
+import type { recipesLoader } from "@/router/loader";
 
 const PAGE_SIZE = 9;
 
 export function useRecipeQuery() {
-  //const { data: recipes = [] } = useGetRecipesCardList();
-  const recipesQuery = useGetRecipesCardList();
-  const filtersQuery = useGetRecipeFilters();
+  const { recipes, filters } = useLoaderData() as Awaited<
+    ReturnType<typeof recipesLoader>
+  >;
 
-  const recipes = recipesQuery.data ?? [];
+  const { cuisines, meals, diets } = filters;
 
-  const cuisines = filtersQuery.data?.cuisines ?? [];
-  const meals = filtersQuery.data?.meals ?? [];
-  const diets = filtersQuery.data?.diets ?? [];
-
-  const isLoading =
-    recipesQuery.isLoading || filtersQuery.isLoading;
-
-  const isError =
-    recipesQuery.isError || filtersQuery.isError;
-
-  const [searchParams, setSearchParams] =
-    useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -55,9 +43,8 @@ export function useRecipeQuery() {
   const sortParam = searchParams.get("sort");
 
   const sortBy: RecipeSort =
-    SORT_OPTIONS.find(
-      (option) => option.value === sortParam,
-    )?.value ?? "recommended";
+    SORT_OPTIONS.find((option) => option.value === sortParam)?.value ??
+    "recommended";
 
   // 1. Filter
   const filteredRecipes = filterRecipes(recipes, {
@@ -69,33 +56,19 @@ export function useRecipeQuery() {
   });
 
   // 2. Sort
-  const sortedRecipes = sortRecipes(
-    filteredRecipes,
-    sortBy,
-  );
+  const sortedRecipes = sortRecipes(filteredRecipes, sortBy);
 
   // 3. Pagination
-  const totalPages = Math.ceil(
-    filteredRecipes.length / PAGE_SIZE,
-  );
+  const totalPages = Math.ceil(filteredRecipes.length / PAGE_SIZE);
 
-  const requestedPage = Number(
-    searchParams.get("page"),
-  );
+  const requestedPage = Number(searchParams.get("page"));
 
   const page =
     Number.isInteger(requestedPage) && requestedPage > 0
-      ? Math.min(
-          requestedPage,
-          Math.max(1, totalPages),
-        )
+      ? Math.min(requestedPage, Math.max(1, totalPages))
       : 1;
 
-  const paginatedRecipes = paginateRecipes(
-    sortedRecipes,
-    page,
-    PAGE_SIZE,
-  );
+  const paginatedRecipes = paginateRecipes(sortedRecipes, page, PAGE_SIZE);
 
   // Search handler
   const handleSearchChange = (value: string) => {
@@ -187,38 +160,21 @@ export function useRecipeQuery() {
 
     return query ? `?${query}` : "/recipes";
   };
-
-  // return {
-  //   searchQuery,
-  //   searchParams,
-  //   filteredRecipes,
-  //   paginatedRecipes,
-  //   sortBy,
-  //   page,
-  //   totalPages,
-
-  //   handleSearchChange,
-  //   handleFilterChange,
-  //   handleSortChange,
-  //   getPageUrl,
-  // };
+  
   return {
-  isLoading,
-  isError,
-  cuisines,
-  meals,
-  diets,
-
-  searchQuery,
-  searchParams,
-  filteredRecipes,
-  paginatedRecipes,
-  sortBy,
-  page,
-  totalPages,
-  handleSearchChange,
-  handleFilterChange,
-  handleSortChange,
-  getPageUrl,
-};
+    cuisines,
+    meals,
+    diets,
+    searchQuery,
+    searchParams,
+    filteredRecipes,
+    paginatedRecipes,
+    sortBy,
+    page,
+    totalPages,
+    handleSearchChange,
+    handleFilterChange,
+    handleSortChange,
+    getPageUrl,
+  };
 }

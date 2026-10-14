@@ -9,8 +9,6 @@ import { useRecipeQuery } from "@/features/recipes/hooks/useRecipeQuery";
 
 function Recipes() {
   const {
-    isLoading,
-    isError,
     cuisines,
     meals,
     diets,
@@ -27,29 +25,6 @@ function Recipes() {
     getPageUrl,
   } = useRecipeQuery();
 
-  if (isLoading) {
-    return (
-      <main
-        aria-busy="true"
-        className="mx-auto flex min-h-[60vh] w-full max-w-6xl items-center justify-center px-4"
-      >
-        <p role="status" className="text-muted-foreground">
-          Loading recipes…
-        </p>
-      </main>
-    );
-  }
-
-  if (isError) {
-    return (
-      <main className="mx-auto w-full max-w-6xl px-4 py-16 text-center">
-        <p role="alert" className="text-muted-foreground">
-          Unable to load recipes. Please try again.
-        </p>
-      </main>
-    );
-  }
-
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
@@ -59,16 +34,13 @@ function Recipes() {
         </h1>
 
         <p className="mx-auto mt-3 max-w-xl text-gray-500">
-          Discover easy, delicious recipes from around the world.
-          Search, filter and find something great to cook today.
+          Discover easy, delicious recipes from around the world. Search, filter
+          and find something great to cook today.
         </p>
       </div>
 
       {/* Search */}
-      <RecipeSearch
-        value={searchQuery}
-        onChange={handleSearchChange}
-      />
+      <RecipeSearch value={searchQuery} onChange={handleSearchChange} />
 
       {/* Main layout */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
@@ -80,10 +52,7 @@ function Recipes() {
           diets={diets}
         />
 
-        <section
-          aria-label="Recipe results"
-          className="min-w-0"
-        >
+        <section aria-label="Recipe results" className="min-w-0">
           <RecipeToolbar
             count={filteredRecipes.length}
             sortBy={sortBy}
@@ -92,9 +61,7 @@ function Recipes() {
 
           {paginatedRecipes.length === 0 ? (
             <div className="rounded-xl border border-dashed px-6 py-16 text-center">
-              <h3 className="font-semibold">
-                No recipes found
-              </h3>
+              <h3 className="font-semibold">No recipes found</h3>
 
               <p className="mt-2 text-sm text-muted-foreground">
                 Try another search or adjust your filters.
