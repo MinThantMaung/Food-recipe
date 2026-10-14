@@ -2,7 +2,7 @@ import { FoodCard } from "@/utils/FoodCard";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export type RecipeCard = {
+export type RecipeCardType = {
   id: number;
   title: string;
   image: string;
@@ -17,7 +17,7 @@ export type RecipeCard = {
 };
 
 type FoodRecommendationProps = {
-  recipes: RecipeCard[];
+  recipes: RecipeCardType[];
 };
 
 export const FoodRecommendation = ({recipes} : FoodRecommendationProps) => {
