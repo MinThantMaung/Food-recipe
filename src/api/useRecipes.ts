@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard } from "./recipes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, postUserReview } from "./recipes";
 
 export const useGetRecipesCardList = () => {
   return useQuery({
@@ -52,5 +52,23 @@ export const useGetRecipeFilters = () => {
     queryFn: getRecipeFilters,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
+  });
+};
+
+export const usePostUserReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: postUserReview,
+    onSuccess: async (_data, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["getRecipeDetailById", variables.recipeId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["getRecipesCard"],
+        }),
+      ]);
+    },
   });
 };
