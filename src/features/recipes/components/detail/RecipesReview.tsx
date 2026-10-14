@@ -1,11 +1,12 @@
+import { usePostUserReview } from "@/api/useRecipes";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
 import { ReviewCard } from "@/utils/ReviewCard";
 import { cn } from "cn";
-import { MessageSquare, Star } from "lucide-react";
+import { LoaderCircle, MessageSquare, Star } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useRevalidator } from "react-router-dom";
 
 export type Review = {
   id: number;
@@ -17,18 +18,41 @@ export type Review = {
     firstName: string | null;
     lastName: string | null;
     image: string | null;
+    email: string | null;
   };
 };
 
 type RecipesReviewsProps = {
+  recipeId: number;
   reviews: Review[];
 };
 
-export function RecipesReview({ reviews }: RecipesReviewsProps) {
+export function RecipesReview({ recipeId, reviews }: RecipesReviewsProps) {
+  const revalidator = useRevalidator();
   const user = useAuthUserStore((state) => state.user);
   const status = useAuthUserStore((state) => state.status);
 
   const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const { mutate, isPending, isError } = usePostUserReview();
+
+  const handleSubmitReview = () => {
+    if (rating < 1 || !comment.trim() || comment.trim().length > 1000) {
+      return;
+    }
+
+    mutate(
+      { recipeId, rating, comment: comment.trim() },
+      {
+        onSuccess: () => {
+          setRating(0);
+          setComment("");
+          revalidator.revalidate();
+        },
+      },
+    );
+  };
   return (
     <section className="w-full rounded-lg bg-white p-4 md:p-8">
       <div className="flex items-center justify-between gap-4">
@@ -117,6 +141,10 @@ export function RecipesReview({ reviews }: RecipesReviewsProps) {
             <textarea
               id="recipe-review"
               rows={4}
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
+              maxLength={1000}
+              disabled={isPending}
               placeholder="How did it turn out? Any tips or changes?"
               className="block w-full resize-y rounded-lg border border-gray-200 bg-white p-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
             />
@@ -124,47 +152,59 @@ export function RecipesReview({ reviews }: RecipesReviewsProps) {
           <div className="flex justify-end">
             <button
               type="button"
+              onClick={handleSubmitReview}
+              disabled={isPending || rating < 1 || !comment.trim()}
               className={cn(
                 buttonVariants(),
                 "bg-orange-500 text-white hover:bg-orange-600",
+                "disabled:cursor-not-allowed disabled:opacity-50",
               )}
             >
-              Submit Review
+              {isPending ? (
+                <>
+                  <LoaderCircle
+                    className="size-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span className="sr-only">"Submitting..."</span>
+                </>
+              ) : (
+                "Submit Review"
+              )}
             </button>
           </div>
+          {isError && (
+            <p role="alert" className="text-sm text-red-500">
+              Unable to submit your review. Please try again.
+            </p>
+          )}
         </div>
       ) : (
         <></>
       )}
-      <h2 className="text-xl font-bold tracking-tight md:text-2xl">
-        Community Reviews
-      </h2>
-      <div className="my-2 flex flex-col md:my-4">
-        {reviews.length > 0 ? (
-          reviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
-          ))
-        ) : (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-orange-200 bg-orange-50/30 px-6 py-4 text-center">
-            <div className="flex size-12 items-center justify-center rounded-full bg-orange-100">
+      <section className="mt-8 border-t border-gray-100 pt-6">
+        <div className="mt-5 flex flex-col">
+          {reviews.length > 0 ? (
+            reviews.map((review) => (
+              <ReviewCard key={review.id} review={review} />
+            ))
+          ) : (
+            <div className="rounded-xl border border-dashed border-orange-200 bg-orange-50/30 px-6 py-8 text-center">
               <MessageSquare
-                className="size-5 text-orange-500"
+                className="mx-auto mb-3 size-6 text-orange-500"
                 aria-hidden="true"
               />
-            </div>
-
-            <div className="space-y-1">
               <h3 className="font-semibold text-gray-900">
                 Be the first to review
               </h3>
-              <p className="max-w-xs text-sm leading-relaxed text-gray-500">
+              <p className="mt-1 text-sm text-gray-500">
                 Tried this recipe? Share how it turned out and help others cook
                 it.
               </p>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </section>
     </section>
   );
 }
