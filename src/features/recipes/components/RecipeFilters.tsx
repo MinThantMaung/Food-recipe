@@ -9,14 +9,6 @@ type RecipeFiltersProps = RecipeFilterOptions & {
   onFilterChange: (filterId: string, value: string, checked: boolean) => void;
 };
 
-// type RecipeFiltersProps = {
-//   searchParams: URLSearchParams;
-//   onFilterChange: (
-//     filterId: string,
-//     value: string,
-//     checked: boolean,
-//   ) => void;
-// };
 
 export type FilterGroup = {
   id: string;
