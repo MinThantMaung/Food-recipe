@@ -88,6 +88,9 @@ export default function MainNavigation() {
           />
           <DropdownMenuContent className="w-32">
             <DropdownMenuGroup>
+              <Link to="/save">
+                <DropdownMenuItem>Saved Recipe</DropdownMenuItem>
+              </Link>
               <Link to="/profile">
                 <DropdownMenuItem>Profile</DropdownMenuItem>
               </Link>
