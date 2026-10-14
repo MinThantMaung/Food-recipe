@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Review } from "@/features/recipes/components/detail/RecipesReview";
 import { Star } from "lucide-react";
 
@@ -6,16 +7,21 @@ type ReviewCardProps = {
 };
 
 export const ReviewCard = ({ review }: ReviewCardProps) => {
-  const fullname = [review.user.firstName, review.user.lastName].filter(Boolean).join(" ") || "Recipe member";
+  const fullname = [review.user.firstName, review.user.lastName].filter(Boolean).join(" ") || review.user.email;
   return (
     <article className="flex items-start gap-3 border-b border-gray-100 py-4 first:pt-0 last:border-b-0 last:pb-0 md:gap-4">
       {/* Avatar */}
-      <img 
+      <Avatar className="size-10 shrink-0 md:size-14">
+      <AvatarImage
         src={review.user.image ?? undefined}
         alt={fullname}
-        loading="lazy"
-        className="size-10 shrink-0 rounded-full object-cover md:size-14"
+        className="object-cover"
       />
+      <AvatarFallback className="bg-orange-100 font-semibold text-orange-600">
+        {fullname.trim().charAt(0).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
+
 
       {/* Content */}
       <div className="min-w-0 flex-1">
