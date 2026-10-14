@@ -16,8 +16,14 @@ import {
 
 import {
   confirmLoader,
+  cuisinesLoader,
+  homeLoader,
   loginLoader,
   otpLoader,
+  profileLoader,
+  recipesDetailLoader,
+  recipesLoader,
+  settingLoader,
 } from "./router/loader/index.ts";
 
 export const router = createBrowserRouter([
@@ -29,9 +35,11 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+        loader: homeLoader
       },
       {
         path: "recipes",
+        loader: recipesLoader,
         lazy: async () => {
           const mod = await import("./pages/Recipes.tsx");
           return { Component: mod.default };
@@ -39,6 +47,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "recipes/:recipeId",
+        loader: recipesDetailLoader,
         lazy: async () => {
           const mod = await import("./pages/RecipeDeatil.tsx");
           return { Component: mod.default };
@@ -46,6 +55,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "cuisines",
+        loader: cuisinesLoader,
         lazy: async () => {
           const mod = await import("./pages/Cuisines.tsx");
           return { Component: mod.default };
@@ -74,6 +84,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "profile",
+        loader: profileLoader,
         lazy: async () => {
           const mod = await import("./pages/Profile.tsx");
           return { Component: mod.default };
@@ -81,6 +92,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "setting",
+        loader: settingLoader,
         lazy: async () => {
           const mod = await import("./pages/Setting.tsx");
           return { Component: mod.default };
