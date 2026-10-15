@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, postUserReview } from "./recipes";
+import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSaveRecipe, postUserReview, saveRecipe, updateReview } from "./recipes";
 
 export const useGetRecipesCardList = () => {
   return useQuery({
@@ -70,5 +70,33 @@ export const usePostUserReview = () => {
         }),
       ]);
     },
+  });
+};
+
+export const useDeleteReview = () => {
+  return useMutation({
+    mutationFn: deleteReview,
+  });
+};
+
+export const useUpdateReview = () => {
+  return useMutation({
+    mutationFn: updateReview,
+  });
+};
+
+export const useSaveRecipe = () => {
+  return useMutation({
+    mutationFn: saveRecipe,
+  });
+};
+
+export const useGetSavedRecipes = (userId: number | undefined) => {
+  return useQuery({
+    queryKey: ["getSavedRecipes", userId],
+    queryFn: getSaveRecipe,
+    enabled: userId !== undefined,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 };
