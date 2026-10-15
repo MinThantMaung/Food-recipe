@@ -13,6 +13,22 @@ type PostReviewInput = {
   comment: string;
 };
 
+type UpdateReviewData = {
+  recipeId: number;
+  rating: number;
+  comment: string;
+};
+
+type SaveRecipeData = {
+  recipeId: number;
+};
+
+type SavedRecipeIdsResponse = {
+  message: string;
+  savedRecipeIds: number[];
+};
+
+
 export type CuisineType = {
   id: number;
   cuisineName: string | null;
@@ -127,4 +143,36 @@ export const getCountries = async (
   );
 
   return res.data.data;
+};
+
+export const deleteReview = async(
+  recipeId: number
+) => {
+  const res = await api.delete(`recipe/${recipeId}/review`)
+  return res.data;
+}
+
+export const updateReview = async ({
+  recipeId,
+  rating,
+  comment,
+}: UpdateReviewData) => {
+  const res = await api.patch(`/recipe/${recipeId}/review`, {
+    rating,
+    comment,
+  });
+
+  return res.data;
+};
+
+export const saveRecipe = async ({ recipeId }: SaveRecipeData) => {
+  const res = await api.post(`/recipe/${recipeId}/save`);
+  return res.data;
+};
+
+
+export const getSaveRecipe = async (): Promise<number[]> => {
+  const res = await api.get<SavedRecipeIdsResponse>("/get/save");
+
+  return res.data.savedRecipeIds;
 };
