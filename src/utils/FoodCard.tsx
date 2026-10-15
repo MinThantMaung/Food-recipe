@@ -1,21 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Bookmark, Clock, Star } from "lucide-react";
 import { cn } from "cn";
+import { type MouseEvent as ReactMouseEvent } from "react";
+import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
+import { toast } from "@/components/ui/toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetSavedRecipes, useSaveRecipe } from "@/api/useRecipes";
 
 export type FoodCardProps = {
+  recipeId: number;
   title: string;
   image: string;
   to: string;
   prepTime: number;
   cookingTime: number;
   country: {
-    cuisineName: string
-  },
+    cuisineName: string;
+  };
   rating: number;
   reviewCount?: number;
 };
 
 export const FoodCard = ({
+  recipeId,
   title,
   image,
   to,
@@ -27,8 +34,66 @@ export const FoodCard = ({
 }: FoodCardProps) => {
   const safeRating = Math.max(0, Math.min(5, rating));
   const duration = prepTime + cookingTime;
+  const navigate = useNavigate();
+  const user = useAuthUserStore((state) => state.user);
+  const status = useAuthUserStore((state) => state.status);
+  const queryClient = useQueryClient();
+  const userId = status === "loading" ? undefined : user?.userId;
+
+  const {
+    data: savedRecipeIds = [],
+    isPending: isLoadingSaved,
+    isError: savedRecipesError,
+  } = useGetSavedRecipes(userId);
+
+  const { mutate: saveRecipeMutation, isPending: isSaving } = useSaveRecipe();
+
+  const isSaved = !!user && savedRecipeIds.includes(recipeId);
+
+  const bookmarkDisabled =
+    status === "loading" ||
+    isSaving ||
+    (!!user && (isLoadingSaved || savedRecipesError));
 
   const imgUrl = import.meta.env.VITE_CDN_URL;
+
+  const handleSave = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (bookmarkDisabled) return;
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (isSaved) return;
+
+    const savingUserId = user.userId;
+
+    saveRecipeMutation(
+      { recipeId },
+      {
+        onSuccess: () => {
+          queryClient.setQueryData<number[]>(
+            ["getSavedRecipes", savingUserId],
+            (previous = []) =>
+              previous.includes(recipeId)
+                ? previous
+                : [...previous, recipeId],
+          );
+        },
+        onError: () => {
+          toast.add({
+            title: "Error",
+            description: "Unable to save this recipe. Please try again.",
+            type: "error",
+          });
+        },
+      },
+    );
+  };
 
   return (
     <Link
@@ -55,22 +120,17 @@ export const FoodCard = ({
         {/* Save Recipe Button */}
         <button
           type="button"
-          // onClick={handleSave}
-          // disabled={isSaving}
-          // aria-label={isSaved ? "Remove saved recipe" : "Save recipe"}
-          // aria-pressed={isSaved}
+          onClick={handleSave}
+          disabled={bookmarkDisabled}
+          aria-label={isSaved ? "Recipe saved" : "Save recipe"}
+          aria-pressed={isSaved}
           className="absolute right-3 top-3 z-10 flex size-9
       cursor-pointer items-center justify-center
       rounded-full bg-white/95 text-orange-500 shadow-sm
       transition-colors hover:bg-orange-50
       disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Bookmark
-            className={cn(
-              "size-4",
-              // isSaved && "fill-orange-500"
-            )}
-          />
+          <Bookmark className={cn("size-4", isSaved && "fill-orange-500")} />
         </button>
       </div>
 
