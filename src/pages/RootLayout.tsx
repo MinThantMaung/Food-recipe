@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/toast";
 
 function RootLayout() {
   const { pathname } = useLocation();
@@ -26,6 +27,7 @@ function RootLayout() {
         )}
       >
         <Outlet />
+        <Toaster />
       </main>
 
       <Footer />
