@@ -56,6 +56,7 @@ export const FoodRecommendation = ({recipes} : FoodRecommendationProps) => {
         {recipes.map((recipe) => (
           <FoodCard
             key={recipe.id}
+            recipeId={recipe.id}
             title={recipe.title}
             image={recipe.image}
             to={`/recipes/${recipe.id}`}
