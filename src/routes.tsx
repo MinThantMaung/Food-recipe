@@ -98,6 +98,13 @@ export const router = createBrowserRouter([
           return { Component: mod.default };
         },
       },
+      {
+        path: "save",
+        lazy: async () => {
+          const mod = await import("./pages/SavedRecipe.tsx");
+          return { Component: mod.default };
+        },
+      },
     ],
   },
   {
