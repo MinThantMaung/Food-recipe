@@ -23,6 +23,7 @@ import {
   profileLoader,
   recipesDetailLoader,
   recipesLoader,
+  savedRecipesLoader,
   settingLoader,
 } from "./router/loader/index.ts";
 
@@ -100,6 +101,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "save",
+        loader: savedRecipesLoader,
         lazy: async () => {
           const mod = await import("./pages/SavedRecipe.tsx");
           return { Component: mod.default };
