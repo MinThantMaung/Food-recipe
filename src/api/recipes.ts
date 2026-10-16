@@ -176,3 +176,16 @@ export const getSaveRecipe = async (): Promise<number[]> => {
 
   return res.data.savedRecipeIds;
 };
+
+
+export const unSaveRecipe = async ({ recipeId }: SaveRecipeData) => {
+  const res = await api.delete(`/recipe/${recipeId}/unsave`);
+  return res.data;
+};
+
+export const getSavedRecipes = async () => {
+  const res = await api.get(`/recipes/save`);
+  return res.data.savedRecipes;
+};
+
+
