@@ -72,6 +72,7 @@ function Recipes() {
               {paginatedRecipes.map((recipe) => (
                 <FoodCard
                   key={recipe.id}
+                  recipeId={recipe.id}
                   title={recipe.title}
                   image={recipe.image}
                   to={`/recipes/${recipe.id}`}
