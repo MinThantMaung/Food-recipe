@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSaveRecipe, postUserReview, saveRecipe, updateReview } from "./recipes";
+import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview } from "./recipes";
 
 export const useGetRecipesCardList = () => {
   return useQuery({
@@ -91,6 +91,13 @@ export const useSaveRecipe = () => {
   });
 };
 
+
+export const useUnSaveRecipe = () => {
+  return useMutation({
+    mutationFn: unSaveRecipe,
+  });
+};
+
 export const useGetSavedRecipes = (userId: number | undefined) => {
   return useQuery({
     queryKey: ["getSavedRecipes", userId],
@@ -98,5 +105,14 @@ export const useGetSavedRecipes = (userId: number | undefined) => {
     enabled: userId !== undefined,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
+  });
+};
+
+export const useGetSavedRecipesData = () => {
+  return useQuery({
+    queryKey: ["getSavedRecipesData"],
+    queryFn: getSavedRecipes,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 };
