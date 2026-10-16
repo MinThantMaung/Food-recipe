@@ -1,5 +1,21 @@
 import { Mail, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useUpdatePhone } from "@/api/useUser";
+import { isAxiosError } from "axios";
 
 type AccountInformationProps = {
   userDetail: {
@@ -12,19 +28,16 @@ type AccountInformationProps = {
   onPhoneChange?: () => void;
 };
 
-export function AccountInformation({
-  userDetail,
-  onPhoneChange,
-}: AccountInformationProps) {
+export function AccountInformation({ userDetail }: AccountInformationProps) {
+  
+const [phoneError, setPhoneError] = useState("");
+const { mutate: updatePhoneMutation, isPending: isUpdatingPhone } =
+  useUpdatePhone();
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-5 md:p-8">
-      <h2 className="text-xl font-bold tracking-tight">
-        Account information
-      </h2>
+      <h2 className="text-xl font-bold tracking-tight">Account information</h2>
 
-      <p className="mt-1 text-sm text-gray-500">
-        Manage your account details.
-      </p>
+      <p className="mt-1 text-sm text-gray-500">Manage your account details.</p>
 
       <dl className="mt-5">
         {/* Email */}
@@ -79,15 +92,88 @@ export function AccountInformation({
                   Used for account recovery and security purposes.
                 </p>
               </div>
+              <Dialog>
+                <DialogTrigger
+                  render={<Button variant="outline">Add / Change</Button>}
+                />
+                <DialogContent className="sm:max-w-sm">
+                  <form
+                    className="space-y-6"
+                    onSubmit={(event) => {
+                      event.preventDefault();
 
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onPhoneChange}
-                className="h-10 w-fit shrink-0 rounded-lg border-gray-200 px-4 text-sm font-semibold text-gray-600"
-              >
-                Add / Change
-              </Button>
+                      if (isUpdatingPhone) return;
+
+                      const formData = new FormData(event.currentTarget);
+                      const phone = String(formData.get("phone") ?? "").trim();
+
+                      if (!phone) {
+                        setPhoneError("Please enter your phone number.");
+                        return;
+                      }
+
+                      setPhoneError("");
+
+                      updatePhoneMutation(phone, {
+                        onSuccess: () => {
+                          console.log("Phone number updated successfully");
+                        },
+                        onError: (error) => {
+                          const message = isAxiosError<{ message?: string }>(error)
+                            ? error.response?.data?.message
+                            : undefined;
+
+                          setPhoneError(
+                            message || "Unable to update your phone number. Please try again.",
+                          );
+                        },
+                      });
+                    }}
+                  >
+                    <DialogHeader>
+                      <DialogTitle>Update your Phone Number</DialogTitle>
+                      <DialogDescription>
+                        Make changes to your Phone here.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <FieldGroup>
+                      <Field>
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          autoComplete="tel"
+                          placeholder="+81 90 1234 5678"
+                          aria-invalid={!!phoneError}
+                          aria-describedby={
+                            phoneError ? "phone-error" : undefined
+                          }
+                          onChange={() => setPhoneError("")}
+                          defaultValue={userDetail.phone ?? ""}
+                        />
+                        {phoneError && (
+                          <p
+                            id="phone-error"
+                            role="alert"
+                            className="text-sm text-red-600"
+                          >
+                            {phoneError}
+                          </p>
+                        )}
+                      </Field>
+                    </FieldGroup>
+                    <DialogFooter>
+                      <DialogClose
+                        render={<Button variant="outline">Cancel</Button>}
+                      />
+                      <Button type="submit" disabled={isUpdatingPhone}>
+                        {isUpdatingPhone ? "Saving..." : "Save changes"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </dd>
         </div>
