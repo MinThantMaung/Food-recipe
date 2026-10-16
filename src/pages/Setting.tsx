@@ -17,7 +17,6 @@ const resetSchema = z
 
     password: z
       .string()
-      // Keep your existing new-password validation here.
       .min(8, "Password must be between 8 and 72 characters")
       .max(72, "Password must be between 8 and 72 characters")
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
@@ -53,6 +52,10 @@ export default function Setting() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  const onPhoneChange = () => {
+
+  }
+
   const onSubmit = (values: ResetFormValues) => {
     console.log(values);
 
@@ -65,7 +68,7 @@ export default function Setting() {
         imageUrl={banner}
         description="Manage your account preferences and security settings"
       />
-      <AccountInformation userDetail={userDetail} />
+      <AccountInformation userDetail={userDetail} onPhoneChange={onPhoneChange} />
       <section className="mt-6 rounded-xl border border-gray-200 bg-white p-5 md:p-8">
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="flex flex-col gap-5">
