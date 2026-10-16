@@ -1,5 +1,5 @@
 import { authApi } from "@/api";
-import { getContinents, getCuisines, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getUserById } from "@/api/recipes";
+import { getContinents, getCuisines, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getUserById } from "@/api/recipes";
 import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import axios from "axios";
 import { redirect, type LoaderFunctionArgs } from "react-router";
@@ -115,9 +115,7 @@ export const profileLoader = async () => {
 
 export const settingLoader = async () => {
   try {
-
     const user = await getUserById();
-
     return user;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -126,4 +124,9 @@ export const settingLoader = async () => {
 
     throw error;
   }
+};
+
+export const savedRecipesLoader = async () => {
+  const savedRecipes = await getSavedRecipes();
+  return savedRecipes;
 };
