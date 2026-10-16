@@ -5,7 +5,11 @@ import { type MouseEvent as ReactMouseEvent } from "react";
 import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
 import { toast } from "@/components/ui/toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetSavedRecipes, useSaveRecipe } from "@/api/useRecipes";
+import {
+  useGetSavedRecipes,
+  useSaveRecipe,
+  useUnSaveRecipe,
+} from "@/api/useRecipes";
 
 export type FoodCardProps = {
   recipeId: number;
@@ -19,6 +23,7 @@ export type FoodCardProps = {
   };
   rating: number;
   reviewCount?: number;
+  onUnsave?: (recipeId: number) => void;
 };
 
 export const FoodCard = ({
@@ -31,6 +36,7 @@ export const FoodCard = ({
   country,
   rating,
   reviewCount,
+  onUnsave
 }: FoodCardProps) => {
   const safeRating = Math.max(0, Math.min(5, rating));
   const duration = prepTime + cookingTime;
@@ -47,12 +53,15 @@ export const FoodCard = ({
   } = useGetSavedRecipes(userId);
 
   const { mutate: saveRecipeMutation, isPending: isSaving } = useSaveRecipe();
+  const { mutate: unSaveRecipeMutation, isPending: isUnSaving } =
+    useUnSaveRecipe();
 
   const isSaved = !!user && savedRecipeIds.includes(recipeId);
 
   const bookmarkDisabled =
     status === "loading" ||
     isSaving ||
+    isUnSaving ||
     (!!user && (isLoadingSaved || savedRecipesError));
 
   const imgUrl = import.meta.env.VITE_CDN_URL;
@@ -68,20 +77,38 @@ export const FoodCard = ({
       return;
     }
 
-    if (isSaved) return;
-
     const savingUserId = user.userId;
+    const queryKey = ["getSavedRecipes", savingUserId];
+
+    if (isSaved) {
+      unSaveRecipeMutation(
+        { recipeId },
+        {
+          onSuccess: () => {
+            queryClient.setQueryData<number[]>(queryKey, (previous = []) =>
+              previous.filter((id) => id !== recipeId),
+            );
+
+            onUnsave?.(recipeId);
+          },
+          onError: () => {
+            toast.add({
+              title: "Error",
+              description: "Unable to unsave this recipe. Please try again.",
+              type: "error",
+            });
+          },
+        },
+      );
+      return; // Prevent the save mutation from running afterward.
+    }
 
     saveRecipeMutation(
       { recipeId },
       {
         onSuccess: () => {
-          queryClient.setQueryData<number[]>(
-            ["getSavedRecipes", savingUserId],
-            (previous = []) =>
-              previous.includes(recipeId)
-                ? previous
-                : [...previous, recipeId],
+          queryClient.setQueryData<number[]>(queryKey, (previous = []) =>
+            previous.includes(recipeId) ? previous : [...previous, recipeId],
           );
         },
         onError: () => {
@@ -122,7 +149,7 @@ export const FoodCard = ({
           type="button"
           onClick={handleSave}
           disabled={bookmarkDisabled}
-          aria-label={isSaved ? "Recipe saved" : "Save recipe"}
+          aria-label={isSaved ? "Unsave recipe" : "Save recipe"}
           aria-pressed={isSaved}
           className="absolute right-3 top-3 z-10 flex size-9
       cursor-pointer items-center justify-center
