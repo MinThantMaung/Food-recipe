@@ -6,10 +6,13 @@ import { ProfileBanner } from "@/features/recipes/components/ProfileBanner";
 import { ProfilePhoto } from "@/features/recipes/components/profile/ProfilePhoto";
 import { PersonalInformation } from "@/features/recipes/components/profile/PersonalInformation";
 import { AccountInformation } from "@/features/recipes/components/profile/AccountInformation";
+import { useState } from "react";
 
 export default function Profile() {
   const { user: userDetail, continent: continentsData } =
     useLoaderData() as Awaited<ReturnType<typeof profileLoader>>;
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   return (
     <div className="mx-auto h-full min-h-0 w-full max-w-6xl px-4 sm:p-6 lg:p-8">
@@ -19,11 +22,15 @@ export default function Profile() {
         description="Manage your profile information and how others see you on Food Recipe."
       />
 
-      <ProfilePhoto userDetail={userDetail} />
+      <ProfilePhoto
+        userDetail={userDetail}
+        onPhotoChange={setSelectedFile}
+      />
 
       <PersonalInformation
         userDetail={userDetail}
         continentsData={continentsData}
+        selectedFile={selectedFile}
       />
 
       <AccountInformation userDetail={userDetail} />
