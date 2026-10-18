@@ -1,5 +1,15 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type AccountActionsProps = {
   onDeleteAccount: () => void;
@@ -36,15 +46,49 @@ export function AccountActions({
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="destructive"
-          onClick={onDeleteAccount}
-          disabled={isDeleting}
-          className="h-10 w-full shrink-0 bg-white text-red-600 px-5 font-semibold hover:bg-red-600 hover:text-white sm:w-auto"
-        >
-          {isDeleting ? "Deleting…" : "Delete account"}
-        </Button>
+        <Dialog>
+            <DialogTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="shrink-0 bg-white text-red-600 px-5 font-semibold hover:bg-red-600 hover:text-white sm:w-auto"
+                >
+                  Delete account
+                </Button>
+              }
+            />
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Delete your account?</DialogTitle>
+                <DialogDescription>
+                  This will permanently delete your account. This action cannot
+                  be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isDeleting}
+                    >
+                      Cancel
+                    </Button>
+                  }
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={onDeleteAccount}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting…" : "Delete"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
