@@ -27,7 +27,6 @@ export default function MainNavigation() {
 
   const user = useAuthUserStore((state) => state.user);
   const status = useAuthUserStore((state) => state.status);
-
   return (
     <div className="hidden w-full items-center justify-between lg:flex">
       <div className="flex items-center gap-8">
