@@ -13,9 +13,10 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useUpdatePhone } from "@/api/useUser";
 import { isAxiosError } from "axios";
+import { useRevalidator } from "react-router-dom";
 
 type AccountInformationProps = {
   userDetail: {
@@ -29,10 +30,43 @@ type AccountInformationProps = {
 };
 
 export function AccountInformation({ userDetail }: AccountInformationProps) {
-  
-const [phoneError, setPhoneError] = useState("");
-const { mutate: updatePhoneMutation, isPending: isUpdatingPhone } =
-  useUpdatePhone();
+  const [phoneError, setPhoneError] = useState("");
+  const { mutate: updatePhoneMutation, isPending: isUpdatingPhone } =
+    useUpdatePhone();
+  const [isPhoneDialogOpen, setIsPhoneDialogOpen] = useState(false);
+  const revalidator = useRevalidator();
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isUpdatingPhone) return;
+
+    const formData = new FormData(event.currentTarget);
+    const phone = String(formData.get("phone") ?? "").trim();
+
+    if (!phone) {
+      setPhoneError("Please enter your phone number.");
+      return;
+    }
+
+    setPhoneError("");
+
+    updatePhoneMutation(phone, {
+      onSuccess: () => {
+        setIsPhoneDialogOpen(false);
+        revalidator.revalidate();
+      },
+      onError: (error) => {
+        const message = isAxiosError<{ message?: string }>(error)
+          ? error.response?.data?.message
+          : undefined;
+
+        setPhoneError(
+          message || "Unable to update your phone number. Please try again."
+        );
+      },
+    });
+  };
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-5 md:p-8">
       <h2 className="text-xl font-bold tracking-tight">Account information</h2>
@@ -92,43 +126,20 @@ const { mutate: updatePhoneMutation, isPending: isUpdatingPhone } =
                   Used for account recovery and security purposes.
                 </p>
               </div>
-              <Dialog>
+              <Dialog
+                open={isPhoneDialogOpen}
+                onOpenChange={(open) => {
+                  setIsPhoneDialogOpen(open);
+                  setPhoneError("");
+                }}
+              >
                 <DialogTrigger
                   render={<Button variant="outline">Add / Change</Button>}
                 />
                 <DialogContent className="sm:max-w-sm">
                   <form
                     className="space-y-6"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-
-                      if (isUpdatingPhone) return;
-
-                      const formData = new FormData(event.currentTarget);
-                      const phone = String(formData.get("phone") ?? "").trim();
-
-                      if (!phone) {
-                        setPhoneError("Please enter your phone number.");
-                        return;
-                      }
-
-                      setPhoneError("");
-
-                      updatePhoneMutation(phone, {
-                        onSuccess: () => {
-                          console.log("Phone number updated successfully");
-                        },
-                        onError: (error) => {
-                          const message = isAxiosError<{ message?: string }>(error)
-                            ? error.response?.data?.message
-                            : undefined;
-
-                          setPhoneError(
-                            message || "Unable to update your phone number. Please try again.",
-                          );
-                        },
-                      });
-                    }}
+                    onSubmit={onSubmit}
                   >
                     <DialogHeader>
                       <DialogTitle>Update your Phone Number</DialogTitle>
