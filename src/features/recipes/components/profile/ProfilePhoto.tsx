@@ -11,34 +11,37 @@ type ProfilePhotoProps = {
     image?: string | null;
     country?: { name: string } | null;
   };
+  onPhotoChange: (file: File) => void;
 };
 
-export function ProfilePhoto({ userDetail }: ProfilePhotoProps) {
+export function ProfilePhoto({ userDetail,onPhotoChange }: ProfilePhotoProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>();
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!selectedFile) return;
-    const url = URL.createObjectURL(selectedFile);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [selectedFile]);
+    if (!previewUrl) return;
+
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
 
   const handlePhotoChange = (file?: File) => {
-    if (!file) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Please select a JPG, PNG, or WebP image.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Please select an image no larger than 5 MB.");
-      return;
-    }
-    setError("");
-    setSelectedFile(file);
-  };
+  if (!file) return;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    setError("Please select a JPG, PNG, or WebP image.");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    setError("Please select an image no larger than 5 MB.");
+    return;
+  }
+
+  setError("");
+  onPhotoChange(file); // Store the actual file in Profile.
+  setPreviewUrl(URL.createObjectURL(file)); // Show the local preview.
+};
 
   const initial = userDetail?.firstName?.trim().charAt(0).toUpperCase() || "M";
   return (
