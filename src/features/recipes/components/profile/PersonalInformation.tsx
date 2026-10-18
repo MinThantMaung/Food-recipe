@@ -12,6 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUpdateProfile } from "@/api/useUser";
+import { useRevalidator } from "react-router-dom";
+import { toast } from "@/components/ui/toast";
+import axios from "axios";
 
 type PersonalInformationProps = {
   userDetail: {
@@ -19,6 +23,7 @@ type PersonalInformationProps = {
     lastName?: string | null;
   };
   continentsData: { id: number; name: string }[];
+  selectedFile: File | null;
 };
 
 const ProfileSchema = z.object({
@@ -30,6 +35,7 @@ type ProfileValues = z.infer<typeof ProfileSchema>;
 export function PersonalInformation({
   userDetail,
   continentsData,
+  selectedFile,
 }: PersonalInformationProps) {
   const [continent, setContinent] = useState("");
   const [countryCode, setCountryCode] = useState("");
@@ -94,8 +100,47 @@ export function PersonalInformation({
     value: country.code,
   }));
 
+  const { mutate, isPending } = useUpdateProfile();
+  const revalidator = useRevalidator();
+
   const handleSave = (data: ProfileValues) => {
-    console.log("Validated profile:", data);
+    const formData = new FormData();
+
+    formData.append("firstName", data.firstName);
+    formData.append("lastName", data.lastName);
+
+    if (countryCode) {
+      formData.append("countryCode", countryCode);
+    }
+
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
+
+    mutate(formData, {
+      onSuccess: () => {
+        reset()
+        toast.add({
+          title: "Profile updated",
+          description: "Your changes have been saved.",
+          type: "success",
+        });
+
+        // Reload the profile loader so displayed user details update.
+        revalidator.revalidate();
+      },
+      onError: (error) => {
+        const message = axios.isAxiosError<{ message: string }>(error)
+          ? error.response?.data?.message
+          : undefined;
+
+        toast.add({
+          title: "Unable to update profile",
+          description: message || "Please try again.",
+          type: "error",
+        });
+      },
+    });
   };
 
   return (
@@ -219,12 +264,12 @@ export function PersonalInformation({
                     !continent
                       ? "Select a continent first"
                       : countriesLoading
-                        ? "Loading countries…"
-                        : countriesError
-                          ? "Unable to load countries"
-                          : countryItems.length === 0
-                            ? "No countries available"
-                            : "Select a country"
+                      ? "Loading countries…"
+                      : countriesError
+                      ? "Unable to load countries"
+                      : countryItems.length === 0
+                      ? "No countries available"
+                      : "Select a country"
                   }
                 />
               </SelectTrigger>
@@ -246,9 +291,10 @@ export function PersonalInformation({
         <div className="flex justify-end">
           <Button
             type="submit"
+            disabled={isPending}
             className="bg-orange-500 text-white hover:bg-orange-600"
           >
-            Save changes
+            {isPending ? "Saving…" : "Save changes"}
           </Button>
         </div>
       </form>
