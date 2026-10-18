@@ -7,7 +7,7 @@ export type AuthUser = {
   image: string | null;
 };
 
-type AuthStatus = "loading" | "authenticated" | "guest";
+type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
 type AuthState = {
   user: AuthUser | null;
@@ -25,7 +25,7 @@ export const useAuthUserStore = create<AuthState>((set) => ({
     set({ user, status: "authenticated" }),
 
   clearUser: () =>
-    set({ user: null, status: "guest" }),
+    set({ user: null, status: "unauthenticated" }),
 
   setLoading: () =>
     set({ status: "loading" }),
