@@ -2,6 +2,7 @@ import { redirect, type ActionFunctionArgs } from "react-router";
 import axios, { AxiosError } from "axios";
 import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import { authApi } from "@/api";
+import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
 
 type ApiErrorResponse = {
   message?: string;
@@ -207,6 +208,7 @@ export const loginAction = async ({
 export const logoutAction = async () => {
   try {
     await authApi.post("logout");
+    useAuthUserStore.getState().clearUser();
     return redirect("/login");
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
