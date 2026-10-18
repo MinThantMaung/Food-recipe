@@ -76,7 +76,7 @@ export default function Setting() {
       },
       {
         onSuccess: () => {
-          reset();
+          reset()
           toast.add({
             title: "Update Success!",
             description: "Password Successfully updated.",
