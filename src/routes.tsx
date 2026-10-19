@@ -184,7 +184,7 @@ export const router = createBrowserRouter([
         loader: confirmLoader,
         action: resetPasswordAction,
         lazy: async () => {
-          const mod = await import("./pages/auth/resetPassword.tsx");
+          const mod = await import("./pages/auth/ResetPassword.tsx");
           return { Component: mod.default };
         },
       },
