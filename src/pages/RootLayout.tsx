@@ -4,6 +4,7 @@ import Header from "../components/layouts/Header";
 import Footer from "../components/layouts/Footer";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toast";
+import ProgressBar from "@/components/progress-bar";
 
 function RootLayout() {
   const { pathname } = useLocation();
@@ -19,7 +20,7 @@ function RootLayout() {
       )}
     >
       <Header />
-
+      <ProgressBar />
       <main
         className={cn(
           "mt-16 flex-1",
