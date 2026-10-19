@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLoaderData, useSearchParams } from "react-router-dom";
 
 import { SORT_OPTIONS } from "../types";
@@ -22,7 +21,7 @@ export function useRecipeQuery() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchQuery = searchParams.get("search") ?? "";
 
   // Read filters from URL
   const selectedMeals = searchParams
@@ -72,21 +71,23 @@ export function useRecipeQuery() {
 
   // Search handler
   const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
+  setSearchParams(
+    (prev) => {
+      const params = new URLSearchParams(prev);
 
-    // Reset to page 1 only when necessary
-    if (searchParams.has("page")) {
-      setSearchParams(
-        (prev) => {
-          const params = new URLSearchParams(prev);
-          params.delete("page");
+      if (value) {
+        params.set("search", value);
+      } else {
+        params.delete("search");
+      }
 
-          return params;
-        },
-        { replace: true },
-      );
-    }
-  };
+      params.delete("page");
+
+      return params;
+    },
+    { replace: true },
+  );
+};
 
   // Filter checkbox handler
   const handleFilterChange = (
