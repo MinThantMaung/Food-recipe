@@ -5,16 +5,21 @@ import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
   const searchRecipes = (query: string) => {
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery) return;
-    // Implement your search logic here
-    console.log(`Searching for recipes with query: ${query}`);
+      const params = new URLSearchParams({
+      search: trimmedQuery,
+    });
+
+    navigate(`/recipes?${params.toString()}`);
   };
   return (
     <section className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 py-8 md:grid-cols-2 md:gap-10 lg:py-10">
