@@ -126,7 +126,6 @@ export function PersonalInformation({
           type: "success",
         });
 
-        // Reload the profile loader so displayed user details update.
         revalidator.revalidate();
       },
       onError: (error) => {
