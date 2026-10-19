@@ -104,13 +104,13 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md border-border/60 shadow-xl shadow-orange-950/5">
       <CardHeader className="gap-5">
-        <div className="flex items-center gap-1.5">
+        <Link to="/" className="flex items-center gap-1.5">
           <img src={logo} alt="" className="size-8 shrink-0" />
 
           <span className="text-lg font-bold tracking-tight text-orange-500">
             Food Recipe
           </span>
-        </div>
+        </Link>
 
         <div className="space-y-2">
           <CardTitle className="text-2xl font-semibold tracking-tight">
