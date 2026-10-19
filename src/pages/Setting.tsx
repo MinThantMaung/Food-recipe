@@ -10,12 +10,12 @@ import { PasswordField } from "@/components/form/PasswordField";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
 import { AccountActions } from "@/features/recipes/components/setting/AccountActions";
-import { SignInMethod } from "@/features/setting/signInmethod";
 import { useDeleteUser, useUpdatePassword } from "@/api/useUser";
 import type { UpdatePasswordInput } from "@/api/user";
 import { toast } from "@/components/ui/toast";
 import axios from "axios";
 import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
+import { SignInMethod } from "@/features/setting/SignInmethod";
 
 const resetSchema = z
   .object({

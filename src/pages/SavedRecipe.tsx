@@ -1,19 +1,33 @@
 import { useState } from "react";
 import { ProfileBanner } from "@/features/recipes/components/ProfileBanner";
-import type { savedRecipesLoader } from "@/router/loader";
 import { Link, useLoaderData } from "react-router-dom";
 import banner from "../assets/profileBanner.png";
 import { RecipeSearch } from "@/features/recipes/components/RecipeSearch";
-import { FoodCard } from "@/utils/FoodCard";
 import { ArrowRight, SearchX } from "lucide-react";
+import { FoodCard, type FoodCardProps } from "@/utils/FoodCard";
+
+type SavedRecipeData = Pick<
+  FoodCardProps,
+  | "title"
+  | "image"
+  | "prepTime"
+  | "cookingTime"
+  | "country"
+  | "rating"
+  | "reviewCount"
+> & {
+  id: number;
+};
+
+type SavedRecipeItem = {
+  recipe: SavedRecipeData;
+};
 
 function SavedRecipe() {
-  const savedRecipes = useLoaderData() as Awaited<
-    ReturnType<typeof savedRecipesLoader>
-  >;
+  const savedRecipes = useLoaderData() as SavedRecipeItem[];
 
-  const [recipes, setRecipes] = useState(() =>
-    savedRecipes.map((saved) => saved.recipe),
+  const [recipes, setRecipes] = useState<SavedRecipeData[]>(() =>
+    savedRecipes.map((saved) => saved.recipe)
   );
 
   const [searchQuery, setSearchQuery] = useState("");
