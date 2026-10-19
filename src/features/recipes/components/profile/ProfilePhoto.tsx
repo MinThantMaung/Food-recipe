@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
@@ -44,6 +44,13 @@ export function ProfilePhoto({ userDetail,onPhotoChange }: ProfilePhotoProps) {
 };
 
   const initial = userDetail?.firstName?.trim().charAt(0).toUpperCase() || "M";
+  const imagePath = userDetail.image;
+
+  const savedImageUrl = imagePath
+    ? /^https?:\/\//i.test(imagePath)
+      ? imagePath
+      : `${import.meta.env.VITE_CDN_URL.replace(/\/+$/, "")}/${imagePath.replace(/^\/+/, "")}`
+    : undefined;
   return (
     <section className="mt-6 rounded-xl border border-gray-200 bg-white p-5 md:p-8">
       <h2 className="text-xl font-bold tracking-tight">Profile photo</h2>
@@ -55,7 +62,7 @@ export function ProfilePhoto({ userDetail,onPhotoChange }: ProfilePhotoProps) {
           <div className="relative w-fit shrink-0">
             <Avatar className="size-24 md:size-32">
               <AvatarImage
-                src={previewUrl ?? userDetail.image ?? undefined}
+                src={previewUrl ?? savedImageUrl}
                 alt={userDetail.firstName || "Your profile"}
                 className="object-cover"
               />
@@ -78,9 +85,13 @@ export function ProfilePhoto({ userDetail,onPhotoChange }: ProfilePhotoProps) {
                 .filter(Boolean)
                 .join(" ") || userDetail.email}
             </p>
-            <p className="text-sm text-gray-500">
-              {userDetail.country?.name || "Country not set"}
-            </p>
+            <div className="flex items-center gap-1.5 text-sm text-gray-500">
+              <MapPin
+                className="size-4 shrink-0 text-orange-500"
+                aria-hidden="true"
+              />
+              <span>{userDetail.country?.name || "Country not set"}</span>
+            </div>
           </div>
         </div>
         <div className="space-y-2 sm:text-right">
