@@ -27,6 +27,12 @@ export default function MainNavigation() {
 
   const user = useAuthUserStore((state) => state.user);
   const status = useAuthUserStore((state) => state.status);
+  const avatarUrl = user?.image
+  ? /^https?:\/\//i.test(user.image)
+    ? user.image // Google or another full image URL
+    : `${import.meta.env.VITE_CDN_URL.replace(/\/$/, "")}/${user.image.replace(/^\/+/, "")}`
+  : undefined;
+  console.log("user image: ", user)
   return (
     <div className="hidden w-full items-center justify-between lg:flex">
       <div className="flex items-center gap-8">
@@ -77,7 +83,7 @@ export default function MainNavigation() {
             render={
               <Button variant="ghost" size="icon" className="rounded-full">
                 <Avatar>
-                  <AvatarImage src={user.image ?? undefined} alt="Profile" />
+                  <AvatarImage src={avatarUrl} alt="Profile" />
                   <AvatarFallback>
                     {user.username?.trim().charAt(0).toUpperCase() || "F"}
                   </AvatarFallback>
