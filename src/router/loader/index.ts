@@ -1,5 +1,7 @@
 import { authApi } from "@/api";
-import { getContinents, getCuisines, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getUserById } from "@/api/recipes";
+import { queryClient } from "@/api/queryClient";
+import { getContinents, getCuisines, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getUserById } from "@/api/recipes";
+import { cuisinesQuery, mealsQuery, recipesCardQuery } from "@/api/useRecipes";
 import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import axios from "axios";
 import { redirect, type LoaderFunctionArgs } from "react-router";
@@ -37,18 +39,22 @@ export const confirmLoader = async () => {
 };
 
 export const homeLoader = async () => {
-    const [recipes, cuisines, meals] = await Promise.all([
-      getRecipesCard(),
-      getCuisines(),
-      getMeals(),
-    ]);
+  await Promise.all([
+    queryClient.query({
+      ...recipesCardQuery(),
+      staleTime: "static",
+    }),
+    queryClient.query({
+      ...cuisinesQuery(),
+      staleTime: "static",
+    }),
+    queryClient.query({
+      ...mealsQuery(),
+      staleTime: "static",
+    }),
+  ]);
 
-    return {
-      recipes,
-      cuisines,
-      meals,
-    };
-  
+  return null;
 };
 
 export const cuisinesLoader = async () => {

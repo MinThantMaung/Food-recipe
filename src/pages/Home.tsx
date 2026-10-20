@@ -2,13 +2,14 @@ import { CuisineCategories } from "@/features/auth/home/CuisineCategories";
 import { FoodRecommendation } from "@/features/auth/home/FoodRecommendation";
 import { Hero } from "@/features/auth/home/Hero";
 import { MealCategories } from "@/features/auth/home/MealCategories";
-import { useLoaderData } from "react-router-dom";
-import type { homeLoader } from "@/router/loader";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { cuisinesQuery, mealsQuery, recipesCardQuery } from "@/api/useRecipes";
 
 function Home() {
-  const { recipes, cuisines, meals } = useLoaderData() as Awaited<
-    ReturnType<typeof homeLoader>
-  >;
+  const { data: recipes } = useSuspenseQuery(recipesCardQuery());
+  const { data: cuisines } = useSuspenseQuery(cuisinesQuery());
+  const { data: meals } = useSuspenseQuery(mealsQuery());
+
   const namedCuisines = cuisines.filter(
     (cuisine): cuisine is typeof cuisine & { cuisineName: string } =>
       cuisine.cuisineName !== null && cuisine.cuisineName.trim().length > 0,

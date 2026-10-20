@@ -1,14 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview } from "./recipes";
 
-export const useGetRecipesCardList = () => {
-  return useQuery({
+
+export const recipesCardQuery = () =>
+  queryOptions({
     queryKey: ["getRecipesCard"],
     queryFn: getRecipesCard,
-    staleTime: 5 * 60 * 1000, // Fresh for 5 minutes
-    gcTime: 30 * 60 * 1000, // Retain inactive cache for 30 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
-};
 
 export const useGetRecipeDetail = (id: number) => {
   return useQuery({
@@ -18,24 +18,21 @@ export const useGetRecipeDetail = (id: number) => {
   });
 };
 
-
-export const useGetCuisines = () => {
-  return useQuery({
+export const cuisinesQuery = () =>
+  queryOptions({
     queryKey: ["getCuisinesList"],
     queryFn: getCuisines,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
   });
-}
 
-export const useGetMeals = () => {
-  return useQuery({
+export const mealsQuery = () =>
+  queryOptions({
     queryKey: ["getMealsList"],
     queryFn: getMeals,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
-}
 
 export const useGetDiets = () => {
   return useQuery({
