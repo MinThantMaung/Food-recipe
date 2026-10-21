@@ -1,5 +1,6 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview } from "./recipes";
+import { queryClient } from "./queryClient";
 
 
 export const recipesCardQuery = () =>
@@ -10,14 +11,14 @@ export const recipesCardQuery = () =>
     gcTime: 30 * 60 * 1000,
   });
 
-export const useGetRecipeDetail = (id: number) => {
-  return useQuery({
+export const recipeDetailQuery = (id: number) =>
+  queryOptions({
     queryKey: ["getRecipeDetailById", id],
     queryFn: () => getRecipeById(id),
-    enabled: Number.isSafeInteger(id) && id > 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
-};
-
+  
 export const cuisinesQuery = () =>
   queryOptions({
     queryKey: ["getCuisinesList"],
@@ -34,23 +35,21 @@ export const mealsQuery = () =>
     gcTime: 30 * 60 * 1000,
   });
 
-export const useGetDiets = () => {
-  return useQuery({
+export const dietQuery = () => 
+  queryOptions({
     queryKey: ["getDietsList"],
     queryFn: getDiets,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
-}
 
-export const useGetRecipeFilters = () => {
-  return useQuery({
+export const recipeFilterQuery = () =>
+   queryOptions({
     queryKey: ["getRecipeFilters"],
     queryFn: getRecipeFilters,
-    staleTime: 30 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
-};
 
 export const usePostUserReview = () => {
   const queryClient = useQueryClient();
@@ -85,13 +84,35 @@ export const useUpdateReview = () => {
 export const useSaveRecipe = () => {
   return useMutation({
     mutationFn: saveRecipe,
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["getSavedRecipes"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: SavedRecipesDataQuery().queryKey,
+        }),
+      ]);
+    },
   });
 };
 
 
 export const useUnSaveRecipe = () => {
-  return useMutation({
+ return useMutation({
     mutationFn: unSaveRecipe,
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["getSavedRecipes"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: SavedRecipesDataQuery().queryKey,
+        }),
+      ]);
+    },
   });
 };
 
@@ -105,11 +126,11 @@ export const useGetSavedRecipes = (userId: number | undefined) => {
   });
 };
 
-export const useGetSavedRecipesData = () => {
-  return useQuery({
+
+export const SavedRecipesDataQuery = () => 
+  queryOptions({
     queryKey: ["getSavedRecipesData"],
     queryFn: getSavedRecipes,
-    staleTime: 30 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
-};

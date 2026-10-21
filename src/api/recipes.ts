@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-catch */
 import type { RecipeFilterOptions } from "@/features/recipes/types";
 import api from ".";
+import type { SavedRecipeItem } from "@/pages/SavedRecipe";
 
 type RecipeFiltersResponse = {
   message: string;
@@ -51,7 +52,6 @@ export type Country = {
   code: string;
 };
 
-
 export const getRecipesCard = async () => {
   try {
     const res = await api.get(`recipes`);
@@ -92,6 +92,7 @@ export const getDiets = async () => {
     throw e;
   }
 };
+
 export const getRecipesByMeal = async () => {
   try {
     const res = await api.get(`cuisinesByMeal`);
@@ -183,8 +184,13 @@ export const unSaveRecipe = async ({ recipeId }: SaveRecipeData) => {
   return res.data;
 };
 
-export const getSavedRecipes = async () => {
-  const res = await api.get(`/recipes/save`);
+export const getSavedRecipes = async (): Promise<
+  SavedRecipeItem[]
+> => {
+  const res = await api.get<{
+    savedRecipes: SavedRecipeItem[];
+  }>("/recipes/save");
+
   return res.data.savedRecipes;
 };
 
