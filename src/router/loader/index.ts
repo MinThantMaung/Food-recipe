@@ -1,7 +1,14 @@
 import { authApi } from "@/api";
 import { queryClient } from "@/api/queryClient";
-import { getContinents, getCuisines, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getUserById } from "@/api/recipes";
-import { cuisinesQuery, mealsQuery, recipesCardQuery } from "@/api/useRecipes";
+import {
+  cuisinesQuery,
+  mealsQuery,
+  recipeDetailQuery,
+  recipeFilterQuery,
+  recipesCardQuery,
+  SavedRecipesDataQuery,
+} from "@/api/useRecipes";
+import { continentsQuery, userProfileQuery } from "@/api/useUser";
 import useAuthStore, { Status } from "@/features/auth/stores/authStore";
 import axios from "axios";
 import { redirect, type LoaderFunctionArgs } from "react-router";
@@ -58,34 +65,48 @@ export const homeLoader = async () => {
 };
 
 export const cuisinesLoader = async () => {
-  return await getCuisines();
+  queryClient.query({
+    ...cuisinesQuery(),
+    staleTime: "static",
+  });
 };
 
 export const recipesLoader = async () => {
-  const [recipes, filters] = await Promise.all([
-    getRecipesCard(),
-    getRecipeFilters(),
+  await Promise.all([
+    queryClient.query({
+      ...recipesCardQuery(),
+      staleTime: "static",
+    }),
+    queryClient.query({
+      ...recipeFilterQuery(),
+      staleTime: "static",
+    }),
   ]);
 
-  return { recipes, filters };
+  return null;
 };
 
-export const recipesDetailLoader = async ({
-  params,
-}: LoaderFunctionArgs) => {
+export const recipesDetailLoader = async ({ params }: LoaderFunctionArgs) => {
   const id = Number(params.recipeId);
 
   if (!Number.isSafeInteger(id) || id < 1) {
-    throw new Response("Invalid recipe ID", { status: 400 });
+    throw new Response("Invalid recipe ID", {
+      status: 400,
+    });
   }
 
-  const recipe = await getRecipeById(id);
+  const recipe = await queryClient.query({
+    ...recipeDetailQuery(id),
+    staleTime: "static",
+  });
 
   if (!recipe) {
-    throw new Response("Recipe not found", { status: 404 });
+    throw new Response("Recipe not found", {
+      status: 404,
+    });
   }
 
-  return recipe;
+  return { id };
 };
 
 export const updateCountryLoader = async () => {
@@ -100,16 +121,12 @@ export const updateCountryLoader = async () => {
 
 export const profileLoader = async () => {
   try {
-
-    const [user, continent] = await Promise.all([
-      getUserById(),
-      getContinents(),
+    await Promise.all([
+      queryClient.query(userProfileQuery()),
+      queryClient.query(continentsQuery()),
     ]);
 
-    return {
-      user,
-      continent
-    };
+    return null;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       throw redirect("/login");
@@ -121,10 +138,14 @@ export const profileLoader = async () => {
 
 export const settingLoader = async () => {
   try {
-    const user = await getUserById();
-    return user;
+    await queryClient.query(userProfileQuery());
+
+    return null;
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401
+    ) {
       throw redirect("/login");
     }
 
@@ -133,6 +154,9 @@ export const settingLoader = async () => {
 };
 
 export const savedRecipesLoader = async () => {
-  const savedRecipes = await getSavedRecipes();
-  return savedRecipes;
+  await queryClient.query({
+    ...SavedRecipesDataQuery(),
+    staleTime: "static",
+  });
+  return null;
 };
