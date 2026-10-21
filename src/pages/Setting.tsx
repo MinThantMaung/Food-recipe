@@ -1,8 +1,7 @@
 import { ProfileBanner } from "@/features/recipes/components/ProfileBanner";
 import banner from "../assets/profileBanner.png";
 import { AccountInformation } from "@/features/recipes/components/setting/AccountInformation";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import type { settingLoader } from "@/router/loader";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,12 +9,13 @@ import { PasswordField } from "@/components/form/PasswordField";
 import { Button } from "@/components/ui/button";
 import { LoaderCircle } from "lucide-react";
 import { AccountActions } from "@/features/recipes/components/setting/AccountActions";
-import { useDeleteUser, useUpdatePassword } from "@/api/useUser";
+import { useDeleteUser, userProfileQuery, useUpdatePassword } from "@/api/useUser";
 import type { UpdatePasswordInput } from "@/api/user";
 import { toast } from "@/components/ui/toast";
 import axios from "axios";
 import { useAuthUserStore } from "@/features/auth/stores/authUserStore";
 import { SignInMethod } from "@/features/setting/SignInmethod";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 const resetSchema = z
   .object({
@@ -43,9 +43,8 @@ const resetSchema = z
 type ResetFormValues = z.infer<typeof resetSchema>;
 
 export default function Setting() {
-  const userDetail = useLoaderData() as Awaited<
-    ReturnType<typeof settingLoader>
-  >;
+
+  const { data: userDetail } = useSuspenseQuery(userProfileQuery());
 
   const navigate = useNavigate();
 

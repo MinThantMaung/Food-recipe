@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { ProfileBanner } from "@/features/recipes/components/ProfileBanner";
-import { Link, useLoaderData } from "react-router-dom";
+import { Link } from "react-router-dom";
 import banner from "../assets/profileBanner.png";
 import { RecipeSearch } from "@/features/recipes/components/RecipeSearch";
 import { ArrowRight, SearchX } from "lucide-react";
 import { FoodCard, type FoodCardProps } from "@/utils/FoodCard";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { SavedRecipesDataQuery } from "@/api/useRecipes";
+import { queryClient } from "@/api/queryClient";
 
-type SavedRecipeData = Pick<
+export type SavedRecipeData = Pick<
   FoodCardProps,
   | "title"
   | "image"
@@ -19,26 +22,26 @@ type SavedRecipeData = Pick<
   id: number;
 };
 
-type SavedRecipeItem = {
+export type SavedRecipeItem = {
   recipe: SavedRecipeData;
 };
 
 function SavedRecipe() {
-  const savedRecipes = useLoaderData() as SavedRecipeItem[];
-
-  const [recipes, setRecipes] = useState<SavedRecipeData[]>(() =>
-    savedRecipes.map((saved) => saved.recipe)
-  );
+  const { data: savedRecipes } = useSuspenseQuery(SavedRecipesDataQuery());
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const recipes = savedRecipes.map((saved) => saved.recipe);
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
 
   const handleUnsave = (recipeId: number) => {
-    setRecipes((previous) =>
-      previous.filter((recipe) => recipe.id !== recipeId),
+    queryClient.setQueryData<SavedRecipeItem[]>(
+      SavedRecipesDataQuery().queryKey,
+      (previous = []) =>
+        previous.filter((saved) => saved.recipe.id !== recipeId),
     );
   };
 

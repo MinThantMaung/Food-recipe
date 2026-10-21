@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import type { recipesDetailLoader } from "@/router/loader";
 
 import { RecipesDetailsHero } from "@/features/recipes/components/detail/RecipesDetailHero";
 import { RecipesDetailStats } from "@/features/recipes/components/detail/RecipesDetailStats";
 import { RecipesDetailsInstruction } from "@/features/recipes/components/detail/RecipesDetailInstruction";
 import { RecipesReview } from "@/features/recipes/components/detail/RecipesReview";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { recipeDetailQuery } from "@/api/useRecipes";
 
 function RecipeDetail() {
-  const recipe = useLoaderData() as Awaited<
-    ReturnType<typeof recipesDetailLoader>
-  >;
+   const { id } = useLoaderData() as { id: number };
+
+  const { data: recipe } = useSuspenseQuery(
+    recipeDetailQuery(id)
+  );
 
   const [serving, setServing] = useState(1);
 
