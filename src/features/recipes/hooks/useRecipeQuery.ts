@@ -1,4 +1,4 @@
-import { useLoaderData, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { SORT_OPTIONS } from "../types";
 import type { RecipeSort } from "../types";
@@ -8,14 +8,14 @@ import {
   sortRecipes,
   paginateRecipes,
 } from "../utils/recipeUtils";
-import type { recipesLoader } from "@/router/loader";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { recipeFilterQuery, recipesCardQuery } from "@/api/useRecipes";
 
 const PAGE_SIZE = 9;
 
 export function useRecipeQuery() {
-  const { recipes, filters } = useLoaderData() as Awaited<
-    ReturnType<typeof recipesLoader>
-  >;
+  const { data: recipes } = useSuspenseQuery(recipesCardQuery());
+  const { data: filters } = useSuspenseQuery(recipeFilterQuery());
 
   const { cuisines, meals, diets } = filters;
 
