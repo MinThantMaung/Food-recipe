@@ -48,7 +48,7 @@ export const confirmLoader = async () => {
 export const homeLoader = async () => {
   await Promise.all([
     queryClient.query({
-      ...recipesCardQuery(),
+      ...recipesCardQuery({ limit: 4 }),
       staleTime: "static",
     }),
     queryClient.query({

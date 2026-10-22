@@ -1,14 +1,14 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type CuisineOptions } from "./recipes";
+import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type CuisineOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
 
 
-export const recipesCardQuery = () =>
+export const recipesCardQuery = (
+  { cursor, limit = 4 }: RecipePaginationOptions = {},
+) =>
   queryOptions({
-    queryKey: ["getRecipesCard"],
-    queryFn: getRecipesCard,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    queryKey: ["getRecipesCard", { cursor: cursor ?? null, limit }],
+    queryFn: () => getRecipesCard({ cursor, limit }),
   });
 
 export const recipeDetailQuery = (id: number) =>

@@ -56,10 +56,18 @@ export type CuisineOptions = {
   limit?: number;
 };
 
+export type RecipePaginationOptions = {
+  cursor?: number;
+  limit?: number;
+};
 
-export const getRecipesCard = async () => {
+
+
+export const getRecipesCard = async (
+  { cursor, limit }: RecipePaginationOptions = {},
+)  => {
   try {
-    const res = await api.get(`pagination`);
+    const res = await api.get("pagination", { params: { cursor, limit }});
     return res.data.recipes;
   } catch (e) {
     throw e;

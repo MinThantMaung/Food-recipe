@@ -6,7 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { cuisinesQuery, mealsQuery, recipesCardQuery } from "@/api/useRecipes";
 
 function Home() {
-  const { data: recipes } = useSuspenseQuery(recipesCardQuery());
+  const { data: recipes } = useSuspenseQuery(recipesCardQuery({ limit: 4 }));
   const { data: cuisines } = useSuspenseQuery(cuisinesQuery({ limit: 4 }));
   const { data: meals } = useSuspenseQuery(mealsQuery());
 
