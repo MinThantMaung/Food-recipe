@@ -52,9 +52,14 @@ export type Country = {
   code: string;
 };
 
+export type CuisineOptions = {
+  limit?: number;
+};
+
+
 export const getRecipesCard = async () => {
   try {
-    const res = await api.get(`recipes`);
+    const res = await api.get(`pagination`);
     return res.data.recipes;
   } catch (e) {
     throw e;
@@ -70,10 +75,16 @@ export const getRecipeById = async (id: number) => {
   }
 };
 
-export const getCuisines = async (): Promise<CuisineType[]> => {
-  const res = await api.get<{ data: CuisineType[] }>("cuisines");
+export const getCuisines = async (
+  { limit }: CuisineOptions = {},
+): Promise<CuisineType[]> => {
+  const res = await api.get<{ data: CuisineType[] }>("cuisines", {
+    params: { limit },
+  });
+
   return res.data.data;
 };
+
 
 export const getMeals = async () => {
   try {
