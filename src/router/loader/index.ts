@@ -52,7 +52,7 @@ export const homeLoader = async () => {
       staleTime: "static",
     }),
     queryClient.query({
-      ...cuisinesQuery(),
+      ...cuisinesQuery({ limit: 4 }),
       staleTime: "static",
     }),
     queryClient.query({
