@@ -32,7 +32,6 @@ export default function MainNavigation() {
     ? user.image // Google or another full image URL
     : `${import.meta.env.VITE_CDN_URL.replace(/\/$/, "")}/${user.image.replace(/^\/+/, "")}`
   : undefined;
-  console.log("user image: ", user)
   return (
     <div className="hidden w-full items-center justify-between lg:flex">
       <div className="flex items-center gap-8">

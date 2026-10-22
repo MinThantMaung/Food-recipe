@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-catch */
 import type { RecipeFilterOptions } from "@/features/recipes/types";
 import api from ".";
+import type { SavedRecipeItem } from "@/pages/SavedRecipe";
 
 type RecipeFiltersResponse = {
   message: string;
@@ -51,8 +52,20 @@ export type Country = {
   code: string;
 };
 
+export type CuisineOptions = {
+  limit?: number;
+};
 
-export const getRecipesCard = async () => {
+export type RecipePaginationOptions = {
+  cursor?: number;
+  limit?: number;
+};
+
+
+
+export const getRecipesCard = async (
+  { cursor, limit }: RecipePaginationOptions = {},
+)  => {
   try {
     const res = await api.get(`pagination`);
     return res.data.recipes;
@@ -70,10 +83,16 @@ export const getRecipeById = async (id: number) => {
   }
 };
 
-export const getCuisines = async (): Promise<CuisineType[]> => {
-  const res = await api.get<{ data: CuisineType[] }>("cuisines");
+export const getCuisines = async (
+  { limit }: CuisineOptions = {},
+): Promise<CuisineType[]> => {
+  const res = await api.get<{ data: CuisineType[] }>("cuisines", {
+    params: { limit },
+  });
+
   return res.data.data;
 };
+
 
 export const getMeals = async () => {
   try {
@@ -92,6 +111,7 @@ export const getDiets = async () => {
     throw e;
   }
 };
+
 export const getRecipesByMeal = async () => {
   try {
     const res = await api.get(`cuisinesByMeal`);
@@ -183,8 +203,13 @@ export const unSaveRecipe = async ({ recipeId }: SaveRecipeData) => {
   return res.data;
 };
 
-export const getSavedRecipes = async () => {
-  const res = await api.get(`/recipes/save`);
+export const getSavedRecipes = async (): Promise<
+  SavedRecipeItem[]
+> => {
+  const res = await api.get<{
+    savedRecipes: SavedRecipeItem[];
+  }>("/recipes/save");
+
   return res.data.savedRecipes;
 };
 

@@ -23,7 +23,6 @@ export function AuthInitializer() {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           clearUser();
         } else {
-          console.error("Auth check failed:", error);
           // Keep the session status unresolved on unexpected errors.
           // A production app should expose an error/retry state.
         }
