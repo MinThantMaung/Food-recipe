@@ -54,7 +54,7 @@ export type Country = {
 
 export const getRecipesCard = async () => {
   try {
-    const res = await api.get(`recipes`);
+    const res = await api.get(`pagination`);
     return res.data.recipes;
   } catch (e) {
     throw e;
