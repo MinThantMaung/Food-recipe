@@ -65,13 +65,12 @@ export type RecipePaginationOptions = {
 
 export const getRecipesCard = async (
   { cursor, limit }: RecipePaginationOptions = {},
-)  => {
-  try {
-    const res = await api.get(`pagination`);
-    return res.data.recipes;
-  } catch (e) {
-    throw e;
-  }
+) => {
+  const res = await api.get("pagination", {
+    params: { cursor, limit },
+  });
+
+  return res.data.recipes;
 };
 
 export const getRecipeById = async (id: number) => {
