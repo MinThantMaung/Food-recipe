@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { CuisineCard } from "@/utils/CuisineCard";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { useLoaderData } from "react-router-dom";
-import type { cuisinesLoader } from "@/router/loader";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { cuisinesQuery } from "@/api/useRecipes";
 
 const continents = ["All", "Asia", "Europe", "Africa", "Americas", "Oceania"];
 
@@ -27,9 +27,7 @@ function Cuisine() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedContinent, setSelectedContinent] = useState("All");
 
-  const cuisines = useLoaderData() as Awaited<
-    ReturnType<typeof cuisinesLoader>
-  >;
+  const { data: cuisines } = useSuspenseQuery(cuisinesQuery());
 
   // Handle continent selection
   const handleContinentChange = (continent: string) => {
