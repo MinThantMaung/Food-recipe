@@ -14,6 +14,7 @@ export const useUpdatePhone = () => {
     },
   });
 };
+
 export const useUpdatePassword = () => {
   return useMutation({
     mutationFn: updatePassword,

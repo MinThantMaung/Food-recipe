@@ -72,9 +72,10 @@ export const usePostUserReview = () => {
 export const useDeleteReview = () => {
   return useMutation({
     mutationFn: deleteReview,
+
     onSuccess: async (_data, recipeId) => {
       await queryClient.invalidateQueries({
-        queryKey: ["recipeDetail", recipeId],
+        queryKey: recipeDetailQuery(recipeId).queryKey,
       });
     },
   });
@@ -83,16 +84,12 @@ export const useDeleteReview = () => {
 export const useUpdateReview = () => {
   return useMutation({
     mutationFn: updateReview,
+
     onSuccess: async (_data, variables) => {
-  await Promise.all([
-    queryClient.invalidateQueries({
-      queryKey: ["recipeDetail", variables.recipeId],
-    }),
-    queryClient.invalidateQueries({
-      queryKey: ["recipes"],
-    }),
-  ]);
-},
+      await queryClient.invalidateQueries({
+        queryKey: recipeDetailQuery(variables.recipeId).queryKey,
+      });
+    },
   });
 };
 
