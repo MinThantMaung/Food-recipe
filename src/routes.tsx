@@ -26,11 +26,13 @@ import {
   savedRecipesLoader,
   settingLoader,
 } from "./router/loader/index.ts";
+import InitialLoading from "./utils/InitialLoading.tsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    hydrateFallbackElement: <InitialLoading />,
     errorElement: "Error",
     children: [
       {
