@@ -27,13 +27,14 @@ import {
   settingLoader,
 } from "./router/loader/index.ts";
 import InitialLoading from "./utils/InitialLoading.tsx";
+import ErrorPage from "./utils/ErrorPage.tsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     hydrateFallbackElement: <InitialLoading />,
-    errorElement: "Error",
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
