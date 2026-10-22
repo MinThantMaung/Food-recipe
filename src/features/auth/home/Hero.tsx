@@ -15,7 +15,7 @@ export const Hero = () => {
     const trimmedQuery = query.trim();
 
     if (!trimmedQuery) return;
-      const params = new URLSearchParams({
+    const params = new URLSearchParams({
       search: trimmedQuery,
     });
 
@@ -86,17 +86,17 @@ export const Hero = () => {
       </div>
 
       <div className="relative min-w-0">
-        <div
-          aria-hidden="true"
-          className="absolute -inset-3 rounded-[2rem] sm:-inset-4"
-        />
-
-        <div className="relative overflow-hidden rounded-2xl shadow-lg shadow-orange-950/10">
+        <div className="relative overflow-hidden rounded-2xl bg-orange-50 shadow-lg shadow-orange-950/10">
           <img
             src={heroImage}
-            alt="Grilled chicken bowl with avocado, vegetables and grains"
-            className="aspect-4/3 max-h-105 w-full object-cover object-center"
+            alt="Grilled chicken bowl served with avocado, fresh vegetables, and grains"
+            width={800}
+            height={600}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+            loading="eager"
             fetchPriority="high"
+            decoding="async"
+            className="aspect-4/3 max-h-105 w-full object-cover object-center"
           />
         </div>
       </div>
