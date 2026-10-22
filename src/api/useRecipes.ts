@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type CuisineOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
 
@@ -54,8 +54,6 @@ export const recipeFilterQuery = () =>
   });
 
 export const usePostUserReview = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: postUserReview,
     onSuccess: async (_data, variables) => {
@@ -74,12 +72,27 @@ export const usePostUserReview = () => {
 export const useDeleteReview = () => {
   return useMutation({
     mutationFn: deleteReview,
+    onSuccess: async (_data, recipeId) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["recipeDetail", recipeId],
+      });
+    },
   });
 };
 
 export const useUpdateReview = () => {
   return useMutation({
     mutationFn: updateReview,
+    onSuccess: async (_data, variables) => {
+  await Promise.all([
+    queryClient.invalidateQueries({
+      queryKey: ["recipeDetail", variables.recipeId],
+    }),
+    queryClient.invalidateQueries({
+      queryKey: ["recipes"],
+    }),
+  ]);
+},
   });
 };
 
