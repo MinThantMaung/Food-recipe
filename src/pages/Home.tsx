@@ -8,7 +8,7 @@ import { cuisinesQuery, mealsQuery, recipesCardQuery } from "@/api/useRecipes";
 function Home() {
   const { data: recipes } = useSuspenseQuery(recipesCardQuery({ limit: 4 }));
   const { data: cuisines } = useSuspenseQuery(cuisinesQuery({ limit: 4 }));
-  const { data: meals } = useSuspenseQuery(mealsQuery());
+  const { data: meals } = useSuspenseQuery(mealsQuery({ limit: 4 }));
 
   const namedCuisines = cuisines.filter(
     (cuisine): cuisine is typeof cuisine & { cuisineName: string } =>

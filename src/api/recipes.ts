@@ -34,11 +34,16 @@ export type CuisineType = {
   id: number;
   cuisineName: string | null;
   description: string | null;
-  image: string;
+  image: string | null;
   continent: {
     id: number;
     name: string;
   };
+};
+
+export type Diet = {
+  id: number;
+  name: string;
 };
 
 export type Continent = {
@@ -52,7 +57,7 @@ export type Country = {
   code: string;
 };
 
-export type CuisineOptions = {
+export type LimitOptions = {
   limit?: number;
 };
 
@@ -60,6 +65,12 @@ export type RecipePaginationOptions = {
   cursor?: number;
   limit?: number;
 };
+
+export type MealType = {
+  id: number;
+  name: string;
+  image: string | null;
+}
 
 
 
@@ -83,7 +94,7 @@ export const getRecipeById = async (id: number) => {
 };
 
 export const getCuisines = async (
-  { limit }: CuisineOptions = {},
+  { limit }: LimitOptions = {},
 ): Promise<CuisineType[]> => {
   const res = await api.get<{ data: CuisineType[] }>("cuisines", {
     params: { limit },
@@ -93,22 +104,19 @@ export const getCuisines = async (
 };
 
 
-export const getMeals = async () => {
-  try {
-    const res = await api.get(`meals`);
-    return res.data.data;
-  } catch (e) {
-    throw e;
-  }
+export const getMeals = async (
+  { limit }: LimitOptions = {},
+): Promise<MealType[]> => {
+  const res = await api.get<{ data: MealType[] }>("meals", {
+    params: { limit },
+  });
+
+  return res.data.data;
 };
 
-export const getDiets = async () => {
-  try {
-    const res = await api.get(`diets`);
-    return res.data.data;
-  } catch (e) {
-    throw e;
-  }
+export const getDiets = async (): Promise<Diet[]> => {
+  const res = await api.get<{ data: Diet[] }>("diets");
+  return res.data.data;
 };
 
 export const getRecipesByMeal = async () => {

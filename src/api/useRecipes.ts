@@ -1,5 +1,5 @@
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type CuisineOptions, type RecipePaginationOptions } from "./recipes";
+import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type LimitOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
 
 
@@ -19,9 +19,7 @@ export const recipeDetailQuery = (id: number) =>
     gcTime: 30 * 60 * 1000,
   });
   
-export const cuisinesQuery = (
-  { limit }: CuisineOptions = {},
-) =>
+export const cuisinesQuery = ({ limit }: LimitOptions = {}) =>
   queryOptions({
     queryKey: ["getCuisinesList", { limit: limit ?? null }],
     queryFn: () => getCuisines({ limit }),
@@ -29,10 +27,11 @@ export const cuisinesQuery = (
     gcTime: 60 * 60 * 1000,
   });
 
-export const mealsQuery = () =>
+
+export const mealsQuery = ({ limit }: LimitOptions = {}) =>
   queryOptions({
-    queryKey: ["getMealsList"],
-    queryFn: getMeals,
+    queryKey: ["getMealsList", { limit }],
+    queryFn: () => getMeals({ limit }),
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
