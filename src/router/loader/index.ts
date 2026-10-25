@@ -56,7 +56,7 @@ export const homeLoader = async () => {
       staleTime: "static",
     }),
     queryClient.query({
-      ...mealsQuery(),
+      ...mealsQuery({ limit: 4 }),
       staleTime: "static",
     }),
   ]);
