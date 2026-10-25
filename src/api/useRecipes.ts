@@ -1,15 +1,45 @@
 import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type LimitOptions, type RecipePaginationOptions } from "./recipes";
+import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getRecipesInfiniteCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type LimitOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
 
 
 export const recipesCardQuery = (
-  { cursor, limit = 4 }: RecipePaginationOptions = {},
+  { limit = 4 }: LimitOptions = {},
 ) =>
   queryOptions({
-    queryKey: ["getRecipesCard", { cursor: cursor ?? null, limit }],
-    queryFn: () => getRecipesCard({ cursor, limit }),
+    queryKey: ["getRecipesCard", { limit }],
+    queryFn: () => getRecipesCard({ limit }),
   });
+
+export const recipesPageQuery = (
+  {
+    page = 1,
+    limit = 9,
+    search = "",
+    meals = [],
+    cuisines = [],
+    diets = [],
+    totalTime = null,
+    sort = "recommended",
+  }: RecipePaginationOptions = {},
+) => {
+  const options = {
+    page,
+    limit,
+    search,
+    meals,
+    cuisines,
+    diets,
+    totalTime,
+    sort,
+  };
+
+  return queryOptions({
+    queryKey: ["getRecipesByPage", options],
+    queryFn: () => getRecipesInfiniteCard(options),
+  });
+};
+
 
 export const recipeDetailQuery = (id: number) =>
   queryOptions({

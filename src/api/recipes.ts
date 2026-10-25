@@ -62,9 +62,16 @@ export type LimitOptions = {
 };
 
 export type RecipePaginationOptions = {
-  cursor?: number;
+  page?: number;
   limit?: number;
+  search?: string;
+  meals?: string[];
+  cuisines?: string[];
+  diets?: string[];
+  totalTime?: string | null;
+  sort?: string;
 };
+
 
 export type MealType = {
   id: number;
@@ -72,16 +79,24 @@ export type MealType = {
   image: string | null;
 }
 
-
-
 export const getRecipesCard = async (
-  { cursor, limit }: RecipePaginationOptions = {},
+  { limit = 4 }: LimitOptions = {},
 ) => {
   const res = await api.get("pagination", {
-    params: { cursor, limit },
+    params: { page: 1, limit },
   });
 
   return res.data.recipes;
+};
+
+export const getRecipesInfiniteCard = async (
+  { page = 1, limit = 9 }: RecipePaginationOptions = {},
+) => {
+  const res = await api.get("recipes", {
+    params: { page, limit },
+  });
+
+  return res.data;
 };
 
 export const getRecipeById = async (id: number) => {

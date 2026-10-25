@@ -1,29 +1,34 @@
 import { useSearchParams } from "react-router-dom";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
+import {
+  recipeFilterQuery,
+  recipesPageQuery,
+} from "@/api/useRecipes";
 import { SORT_OPTIONS } from "../types";
 import type { RecipeSort } from "../types";
 
-import {
-  filterRecipes,
-  sortRecipes,
-  paginateRecipes,
-} from "../utils/recipeUtils";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { recipeFilterQuery, recipesCardQuery } from "@/api/useRecipes";
-
 const PAGE_SIZE = 9;
+const MAX_PAGE = 1_000_000;
 
 export function useRecipeQuery() {
-  const { data: recipes } = useSuspenseQuery(recipesCardQuery());
-  const { data: filters } = useSuspenseQuery(recipeFilterQuery());
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const { data: filters } = useSuspenseQuery(recipeFilterQuery());
   const { cuisines, meals, diets } = filters;
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Read and validate the current page.
+  const pageParam = Number(searchParams.get("page") ?? "1");
+
+  const page =
+    Number.isInteger(pageParam) &&
+    pageParam >= 1 &&
+    pageParam <= MAX_PAGE
+      ? pageParam
+      : 1;
 
   const searchQuery = searchParams.get("search") ?? "";
 
-  // Read filters from URL
   const selectedMeals = searchParams
     .getAll("meal")
     .map((value) => value.toLowerCase());
@@ -38,58 +43,49 @@ export function useRecipeQuery() {
 
   const selectedTime = searchParams.get("totalTime");
 
-  // Validate sort option from URL
   const sortParam = searchParams.get("sort");
 
   const sortBy: RecipeSort =
     SORT_OPTIONS.find((option) => option.value === sortParam)?.value ??
     "recommended";
 
-  // 1. Filter
-  const filteredRecipes = filterRecipes(recipes, {
-    search: searchQuery,
-    meals: selectedMeals,
-    cuisines: selectedCuisines,
-    diets: selectedDiets,
-    totalTime: selectedTime,
-  });
-
-  // 2. Sort
-  const sortedRecipes = sortRecipes(filteredRecipes, sortBy);
-
-  // 3. Pagination
-  const totalPages = Math.ceil(filteredRecipes.length / PAGE_SIZE);
-
-  const requestedPage = Number(searchParams.get("page"));
-
-  const page =
-    Number.isInteger(requestedPage) && requestedPage > 0
-      ? Math.min(requestedPage, Math.max(1, totalPages))
-      : 1;
-
-  const paginatedRecipes = paginateRecipes(sortedRecipes, page, PAGE_SIZE);
-
-  // Search handler
-  const handleSearchChange = (value: string) => {
-  setSearchParams(
-    (prev) => {
-      const params = new URLSearchParams(prev);
-
-      if (value) {
-        params.set("search", value);
-      } else {
-        params.delete("search");
-      }
-
-      params.delete("page");
-
-      return params;
-    },
-    { replace: true },
+  // The backend handles filtering, sorting, and pagination.
+  const { data } = useSuspenseQuery(
+    recipesPageQuery({
+      page,
+      limit: PAGE_SIZE,
+      search: searchQuery,
+      meals: selectedMeals,
+      cuisines: selectedCuisines,
+      diets: selectedDiets,
+      totalTime: selectedTime,
+      sort: sortBy,
+    }),
   );
-};
 
-  // Filter checkbox handler
+  const paginatedRecipes = data.recipes;
+  const totalRecipes = data.totalCount;
+  const totalPages = data.totalPages;
+
+  const handleSearchChange = (value: string) => {
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+
+        if (value) {
+          params.set("search", value);
+        } else {
+          params.delete("search");
+        }
+
+        params.delete("page");
+
+        return params;
+      },
+      { replace: true },
+    );
+  };
+
   const handleFilterChange = (
     filterId: string,
     value: string,
@@ -99,15 +95,15 @@ export function useRecipeQuery() {
       const params = new URLSearchParams(prev);
       const normalizedValue = value.toLowerCase();
 
-      // Single selection: Total time
       if (filterId === "totalTime") {
+        // Total time allows one selection.
         if (checked) {
           params.set(filterId, normalizedValue);
         } else {
           params.delete(filterId);
         }
       } else {
-        // Multiple selections
+        // Meals, cuisines, and diets allow multiple selections.
         const values = params
           .getAll(filterId)
           .map((item) => item.toLowerCase())
@@ -130,7 +126,6 @@ export function useRecipeQuery() {
     });
   };
 
-  // Sort handler
   const handleSortChange = (value: RecipeSort) => {
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
@@ -147,7 +142,28 @@ export function useRecipeQuery() {
     });
   };
 
-  // Pagination URL
+  const handlePageChange = (newPage: number) => {
+    if (
+      !Number.isInteger(newPage) ||
+      newPage < 1 ||
+      newPage > Math.min(MAX_PAGE, Math.max(1, totalPages))
+    ) {
+      return;
+    }
+
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+
+      if (newPage === 1) {
+        params.delete("page");
+      } else {
+        params.set("page", String(newPage));
+      }
+
+      return params;
+    });
+  };
+
   const getPageUrl = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
 
@@ -159,23 +175,28 @@ export function useRecipeQuery() {
 
     const query = params.toString();
 
-    return query ? `?${query}` : "/recipes";
+    return query ? `/recipes?${query}` : "/recipes";
   };
-  
+
   return {
     cuisines,
     meals,
     diets,
     searchQuery,
     searchParams,
-    filteredRecipes,
+    selectedMeals,
+    selectedCuisines,
+    selectedDiets,
+    selectedTime,
     paginatedRecipes,
+    totalRecipes,
     sortBy,
     page,
     totalPages,
     handleSearchChange,
     handleFilterChange,
     handleSortChange,
+    handlePageChange,
     getPageUrl,
   };
 }
