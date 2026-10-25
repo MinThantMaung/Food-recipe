@@ -1,13 +1,8 @@
+import type { MealType } from "@/api/recipes";
 import { MenuCard } from "@/utils/MenuCard";
 
-export type RecipeCard = {
-  id: number;
-  name: string;
-  image: string;
-};
-
 type mealsProps = {
-  meals: RecipeCard[];
+  meals: MealType[];
 };
 
 export const MealCategories = ({meals} : mealsProps) => {
@@ -22,7 +17,7 @@ export const MealCategories = ({meals} : mealsProps) => {
           <MenuCard
             key={meal.id}
             title={meal.name}
-            image={meal.image}
+            image={meal.image ?? ""}
             to={`/recipes?meal=${encodeURIComponent(meal.name.toLowerCase())}`}
           />
         ))}

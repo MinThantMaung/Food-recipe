@@ -1,18 +1,13 @@
+import type { CuisineType } from "@/api/recipes";
 import { MenuCard } from "@/utils/MenuCard";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export type CuisineCard = {
-  id: number;
-  cuisineName: string;
-  image: string;
-};
-
 type CuisineCardProps = {
-  cuisines: CuisineCard[];
+  cuisines: CuisineType[];
 };
 
-export const CuisineCategories = ({cuisines} : CuisineCardProps) => {
+export const CuisineCategories = ({ cuisines }: CuisineCardProps) => {
   return (
     <section className="mx-auto max-w-6xl py-8">
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -43,9 +38,11 @@ export const CuisineCategories = ({cuisines} : CuisineCardProps) => {
         {cuisines.slice(0, 4).map((cuisine) => (
           <MenuCard
             key={cuisine.id}
-            title={cuisine.cuisineName}
-            image={cuisine.image}
-            to={`/recipes?cuisine=${encodeURIComponent(cuisine.cuisineName.toLowerCase())}`}
+            title={cuisine.cuisineName ?? ""}
+            image={cuisine.image ?? ""}
+            to={`/recipes?cuisine=${encodeURIComponent(
+              (cuisine.cuisineName ?? "").toLowerCase()
+            )}`}
           />
         ))}
       </div>
