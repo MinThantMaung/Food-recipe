@@ -6,6 +6,7 @@ import { RecipeFilters } from "@/features/recipes/components/RecipeFilters";
 import { RecipeToolbar } from "@/features/recipes/components/RecipeToolbar";
 import { RecipePagination } from "@/features/recipes/components/RecipePagination";
 import { useRecipeQuery } from "@/features/recipes/hooks/useRecipeQuery";
+import type { Recipe } from "@/features/recipes/types";
 
 function Recipes() {
   const {
@@ -100,7 +101,7 @@ function Recipes() {
         </div>
 
         {/* Results toolbar */}
-        <div className="min-w-0 [&>*]:mb-0 lg:col-start-2 lg:row-start-1">
+        <div className="min-w-0 *:mb-0 lg:col-start-2 lg:row-start-1">
           <RecipeToolbar
             count={totalRecipes}
             sortBy={sortBy}
@@ -111,7 +112,7 @@ function Recipes() {
         {/* Desktop filter panel */}
         <aside
           aria-labelledby="recipe-filters-heading"
-          className="hidden min-w-0 flex-col [&>*]:w-full [&>*]:flex-1 lg:col-start-1 lg:row-start-2 lg:flex"
+          className="hidden min-w-0 flex-col *:w-full *:flex-1 lg:col-start-1 lg:row-start-2 lg:flex"
         >
           {filters}
         </aside>
@@ -137,7 +138,7 @@ function Recipes() {
             </div>
           ) : (
             <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {paginatedRecipes.map((recipe) => (
+              {paginatedRecipes.map((recipe: Recipe) => (
                 <FoodCard
                   key={recipe.id}
                   recipeId={recipe.id}
