@@ -1,7 +1,6 @@
-import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
-import { deleteReview, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getRecipesInfiniteCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type LimitOptions, type RecipePaginationOptions } from "./recipes";
+import { keepPreviousData, queryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import { deleteReview, fetchInfiniteRecipes, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getRecipesInfiniteCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type InfiniteRecipesResponse, type LimitOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
-
 
 export const recipesCardQuery = (
   { limit = 4 }: LimitOptions = {},
@@ -39,6 +38,24 @@ export const recipesPageQuery = (
     queryFn: () => getRecipesInfiniteCard(options),
   });
 };
+
+//test
+export const recipesInfiniteQuery = (
+  cuisines: string | null = null,
+  search: string | null = null,
+) => ({
+  queryKey: [
+    "recipes",
+    "infinite",
+    cuisines ?? undefined,
+    search ?? undefined,
+  ],
+  queryFn: ({ pageParam }: { pageParam?: number | null }) =>
+    fetchInfiniteRecipes({ pageParam, cuisines, search }),
+  placeholderData: keepPreviousData,
+  initialPageParam: null, // Start with no cursor
+  getNextPageParam: (lastPage: InfiniteRecipesResponse) => lastPage.nextCursor ?? undefined,
+});
 
 
 export const recipeDetailQuery = (id: number) =>

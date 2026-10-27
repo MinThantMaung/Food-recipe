@@ -1,7 +1,15 @@
 /* eslint-disable no-useless-catch */
-import type { RecipeFilterOptions } from "@/features/recipes/types";
+import type { Recipe, RecipeFilterOptions } from "@/features/recipes/types";
 import api from ".";
 import type { SavedRecipeItem } from "@/pages/SavedRecipe";
+
+export type InfiniteRecipesResponse = {
+  message: string;
+  hasNextPage: boolean;
+  nextCursor: number | null;
+  recipes: Recipe[];
+};
+
 
 type RecipeFiltersResponse = {
   message: string;
@@ -97,6 +105,23 @@ export const getRecipesInfiniteCard = async (
   });
 
   return res.data;
+};
+
+//test
+export const fetchInfiniteRecipes = async ({
+  pageParam = null,
+  cuisines = null,
+  search = null,
+}: {
+  pageParam?: number | null;
+  cuisines?: string | null;
+  search?: string | null;
+}): Promise<InfiniteRecipesResponse> => {
+  let query = pageParam ? `?limit=9&cursor=${pageParam}` : "?limit=9";
+  if (cuisines) query += `&countryId=${cuisines}`;
+  if (search) query += `&search=${search}`;
+  const response = await api.get(`recipes${query}`);
+  return response.data;
 };
 
 export const getRecipeById = async (id: number) => {
