@@ -8,6 +8,8 @@ export type InfiniteRecipesResponse = {
   hasNextPage: boolean;
   nextCursor: number | null;
   recipes: Recipe[];
+  totalPages: number;
+  totalCount: number;
 };
 
 
@@ -112,14 +114,17 @@ export const fetchInfiniteRecipes = async ({
   pageParam = null,
   cuisines = null,
   search = null,
+  sort = null
 }: {
   pageParam?: number | null;
   cuisines?: string | null;
   search?: string | null;
+  sort?: string | null;
 }): Promise<InfiniteRecipesResponse> => {
   let query = pageParam ? `?limit=9&cursor=${pageParam}` : "?limit=9";
   if (cuisines) query += `&countryId=${cuisines}`;
   if (search) query += `&search=${search}`;
+  if (sort) query += `&sort=${sort}`
   const response = await api.get(`recipes${query}`);
   return response.data;
 };

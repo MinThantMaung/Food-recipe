@@ -1,4 +1,3 @@
-
 import {
   Select,
   SelectContent,
@@ -8,17 +7,18 @@ import {
 } from "@/components/ui/select";
 
 import { SORT_OPTIONS } from "../types";
-import type { RecipeSort } from "../types";
+
+type RecipeSort = (typeof SORT_OPTIONS)[number]["value"];
 
 type RecipeToolbarProps = {
-  count: number;
-  sortBy: RecipeSort;
-  onSortChange: (value: RecipeSort) => void;
+  totalRecipes: number | undefined;
+  sort: RecipeSort;
+  onSortChange: (sort: RecipeSort) => void;
 };
 
 export function RecipeToolbar({
-  count,
-  sortBy,
+  totalRecipes,
+  sort,
   onSortChange,
 }: RecipeToolbarProps) {
   return (
@@ -28,12 +28,19 @@ export function RecipeToolbar({
       </h2>
 
       <div className="flex items-center justify-between gap-3 sm:justify-end">
-        <span className="shrink-0 text-sm text-muted-foreground">
-          {count} recipes
+        <span
+          aria-live="polite"
+          className="shrink-0 text-sm text-muted-foreground"
+        >
+          {totalRecipes === undefined
+            ? "— recipes"
+            : `${totalRecipes.toLocaleString()} ${
+                totalRecipes === 1 ? "recipe" : "recipes"
+              }`}
         </span>
 
         <Select
-          value={sortBy}
+          value={sort}
           onValueChange={(value) => {
             const option = SORT_OPTIONS.find(
               (item) => item.value === value,
@@ -53,10 +60,7 @@ export function RecipeToolbar({
 
           <SelectContent align="end">
             {SORT_OPTIONS.map((option) => (
-              <SelectItem
-                key={option.value}
-                value={option.value}
-              >
+              <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
             ))}
