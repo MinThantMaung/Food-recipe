@@ -61,7 +61,10 @@ function SavedRecipe() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
         <div className="w-full min-w-0 sm:max-w-xl [&>div]:mx-0 [&>div]:mb-0">
-          <RecipeSearch value={searchQuery} onChange={handleSearchChange} />
+          <RecipeSearch
+            initialValue={searchQuery}
+            onSearch={handleSearchChange}
+          />
         </div>
 
         <p className="shrink-0 whitespace-nowrap text-sm text-gray-500">
