@@ -43,15 +43,14 @@ export const recipesPageQuery = (
 export const recipesInfiniteQuery = (
   cuisines: string | null = null,
   search: string | null = null,
+  sort: string = "recommended",
+  meal: string | null = null,
+  diet: string | null = null,
+  totalTime : string | null = null
 ) => ({
-  queryKey: [
-    "recipes",
-    "infinite",
-    cuisines ?? undefined,
-    search ?? undefined,
-  ],
+  queryKey: ["getRecipesInfinite", cuisines, search, sort, meal, diet, totalTime],
   queryFn: ({ pageParam }: { pageParam?: number | null }) =>
-    fetchInfiniteRecipes({ pageParam, cuisines, search }),
+    fetchInfiniteRecipes({ pageParam, cuisines, search, sort, meal, diet, totalTime}),
   placeholderData: keepPreviousData,
   initialPageParam: null, // Start with no cursor
   getNextPageParam: (lastPage: InfiniteRecipesResponse) => lastPage.nextCursor ?? undefined,
