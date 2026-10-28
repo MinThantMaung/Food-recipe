@@ -114,17 +114,26 @@ export const fetchInfiniteRecipes = async ({
   pageParam = null,
   cuisines = null,
   search = null,
-  sort = null
+  sort = null,
+  meal = null,
+  diet = null,
+  totalTime = null
 }: {
   pageParam?: number | null;
   cuisines?: string | null;
   search?: string | null;
   sort?: string | null;
+  meal?: string | null;
+  diet?: string | null;
+  totalTime?: string | null;
 }): Promise<InfiniteRecipesResponse> => {
   let query = pageParam ? `?limit=9&cursor=${pageParam}` : "?limit=9";
   if (cuisines) query += `&countryId=${cuisines}`;
   if (search) query += `&search=${search}`;
-  if (sort) query += `&sort=${sort}`
+  if (sort) query += `&sort=${sort}`;
+  if (meal) query += `&meal=${meal}`;
+  if (diet) query += `&diet=${diet}`
+  if (totalTime) query += `&totalTime=${totalTime}`
   const response = await api.get(`recipes${query}`);
   return response.data;
 };
