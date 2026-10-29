@@ -218,3 +218,31 @@ export const logoutAction = async () => {
     }
   }
 };
+
+export const contactAction = async ({ request }: ActionFunctionArgs) => {
+  try {
+    const formData = await request.formData();
+
+    const credentials = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+    };
+
+    await authApi.post("/contact", credentials);
+
+    return { success: true, error: null };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.message ?? "Failed to send message",
+      };
+    }
+
+    return {
+      success: false,
+      error: "Something went wrong",
+    };
+  }
+};

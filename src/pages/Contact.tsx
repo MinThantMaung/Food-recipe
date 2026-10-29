@@ -5,13 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SubmitButton } from "@/components/form/SubmitButton";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useNavigation,
+  useSubmit,
+} from "react-router-dom";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EmailField } from "@/components/form/EmailField";
 import { cn } from "@/lib/utils";
 import { LockKeyhole } from "lucide-react";
+import type { contactAction } from "@/router/action";
+import { useEffect } from "react";
+import { toast } from "@/components/ui/toast";
 
 const contactSchema = z.object({
   name: z
@@ -41,22 +49,44 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 function Contact() {
+  const submit = useSubmit();
+  const navigation = useNavigation();
+  const actionData = useActionData<typeof contactAction>();
+  const isSending = navigation.state !== "idle";
   const {
-  register,
-  handleSubmit,
-  // reset,
-  formState: { errors, isSubmitting },
-} = useForm<ContactFormValues>({
-  resolver: zodResolver(contactSchema),
-  defaultValues: {
-    name: "",
-    email: "",
-    message: "",
-  },
-});
-  const onSubmit = (data: ContactFormValues) => {
-    console.log("data : ", data);
-    //submit(data, { method: "post" });
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
+  });
+  useEffect(() => {
+    if (actionData?.success) {
+      toast.add({
+        title: "Message sent successfully!",
+        description: "Thank you for contacting us.",
+        type: "success",
+      });
+
+      reset();
+    }
+
+    if (actionData?.error) {
+      toast.add({
+        title: "Failed to send message",
+        description: actionData.error,
+        type: "error",
+      });
+    }
+  }, [actionData, reset]);
+  const onSubmit = (values: ContactFormValues) => {
+    submit(values, { method: "post" });
   };
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 md:py-12">
@@ -151,7 +181,7 @@ function Contact() {
                     )}
                   </div>
                   <SubmitButton
-                    isSubmitting={isSubmitting}
+                    isSubmitting={isSending}
                     label="Send Message"
                     loadingLabel="Sending"
                   />

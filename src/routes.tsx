@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 
 import {
   confirmPasswordAction,
+  contactAction,
   forgotPasswordAction,
   loginAction,
   logoutAction,
@@ -81,6 +82,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "contact",
+        action: contactAction,
         lazy: async () => {
           const mod = await import("./pages/Contact.tsx");
           return { Component: mod.default };
