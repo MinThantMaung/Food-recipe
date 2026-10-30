@@ -204,7 +204,7 @@ function RecipesFilter({ filterList, defaultValues, onApply }: FilterProps) {
                                   aria-describedby={
                                     fieldState.invalid ? errorId : undefined
                                   }
-                                  className="size-4 shrink-0 rounded border-gray-300 shadow-none data-[checked]:border-orange-500 data-[checked]:bg-orange-500 data-[checked]:text-white data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:text-white"
+                                  className="size-4 shrink-0 rounded border-gray-300 shadow-none data-checked:border-orange-500 data-checked:bg-orange-500 data-checked:text-white data-[state=checked]:border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:text-white"
                                   onCheckedChange={(checked) => {
                                     const remaining = field.value.filter(
                                       (selected) => selected !== value,

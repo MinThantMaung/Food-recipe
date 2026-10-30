@@ -1,8 +1,6 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 
 import RootLayout from "./pages/RootLayout";
-import Home from "./pages/Home";
-
 import {
   confirmPasswordAction,
   contactAction,
@@ -39,7 +37,10 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        lazy: async () => {
+          const mod = await import("./pages/Home.tsx");
+          return { Component: mod.default };
+        },
         loader: homeLoader
       },
       {
