@@ -21,7 +21,6 @@ export type RecipeFilterId =
 // One definition for sort values and visible labels
 export const SORT_OPTIONS = [
   { value: "recommended", label: "Recommended" },
-  { value: "HighestRated", label: "Highest rated" },
   { value: "MostPopular", label: "Most reviewed" },
   { value: "ShortestTime", label: "Quickest to cook" },
   { value: "LongestTime", label: "Longest cooking time" },

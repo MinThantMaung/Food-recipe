@@ -58,10 +58,6 @@ function RecipesContent() {
   const navigationPending = useRef(false);
   const navigationVersion = useRef(0);
 
-  // -------------------------
-  // Filter options
-  // -------------------------
-
   const filterList = {
     meals: filters.meals.map((meal) => ({
       id: String(meal.id),
@@ -92,10 +88,6 @@ function RecipesContent() {
     };
   }, []);
 
-  // -------------------------
-  // URL parameters
-  // -------------------------
-
   const countryId = searchParams.get("countryId");
   const search = searchParams.get("search");
   const meal = searchParams.get("meal");
@@ -125,12 +117,8 @@ function RecipesContent() {
       (option) => option.value === searchParams.get("sort"),
     )?.value ?? "recommended";
 
-  // -------------------------
-  // URL navigation helper
-  // -------------------------
 
   function updateSearchParams(params: URLSearchParams) {
-    // Keep commas readable in the browser URL.
     const query = params.toString().replace(/%2C/gi, ",");
 
     navigate({
@@ -139,10 +127,6 @@ function RecipesContent() {
       hash: location.hash,
     });
   }
-
-  // -------------------------
-  // Infinite query
-  // -------------------------
 
   const {
     data,
@@ -184,10 +168,6 @@ function RecipesContent() {
   const paginationDisabled =
     isFetching || isPlaceholderData || isChangingPage;
 
-  // -------------------------
-  // Reset pagination
-  // -------------------------
-
   function resetPagination() {
     navigationVersion.current += 1;
     navigationPending.current = false;
@@ -196,10 +176,6 @@ function RecipesContent() {
     setNavigationError(null);
     setPageIndex(0);
   }
-
-  // -------------------------
-  // Sorting
-  // -------------------------
 
   function handleSortChange(value: RecipeSort) {
     if (value === sort) return;
@@ -219,10 +195,6 @@ function RecipesContent() {
 
     updateSearchParams(params);
   }
-
-  // -------------------------
-  // Pagination
-  // -------------------------
 
   async function handlePageChange(page: number) {
     if (
@@ -541,8 +513,8 @@ function RecipesContent() {
                       prepTime={recipe.prepTime}
                       cookingTime={recipe.cookingTime}
                       country={recipe.country}
-                      rating={0}
-                      reviewCount={0}
+                      rating={recipe.rating}
+                      reviewCount={recipe.reviewCount}
                     />
                   ))}
                 </div>

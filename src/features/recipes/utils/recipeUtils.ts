@@ -105,9 +105,6 @@ export const sortRecipes = (
 ): Recipe[] => {
   return [...recipes].sort((a, b) => {
     switch (sortBy) {
-      case "HighestRated":
-        return (b.rating ?? 0) - (a.rating ?? 0);
-
       case "MostPopular":
         return (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
 

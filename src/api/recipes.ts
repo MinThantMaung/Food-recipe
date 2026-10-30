@@ -105,7 +105,6 @@ export const getRecipesInfiniteCard = async (
   const res = await api.get("recipes", {
     params: { page, limit },
   });
-
   return res.data;
 };
 
