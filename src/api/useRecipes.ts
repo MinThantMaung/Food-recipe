@@ -2,6 +2,26 @@ import { keepPreviousData, queryOptions, useMutation, useQuery } from "@tanstack
 import { deleteReview, fetchInfiniteRecipes, getCuisines, getDiets, getMeals, getRecipeById, getRecipeFilters, getRecipesCard, getRecipesInfiniteCard, getSavedRecipes, getSaveRecipe, postUserReview, saveRecipe, unSaveRecipe, updateReview, type InfiniteRecipesResponse, type LimitOptions, type RecipePaginationOptions } from "./recipes";
 import { queryClient } from "./queryClient";
 
+const invalidateRecipeReviewQueries = async (recipeId: number) => {
+  await Promise.all([
+    queryClient.invalidateQueries({
+      queryKey: ["getRecipeDetailById", recipeId],
+    }),
+    queryClient.invalidateQueries({
+      queryKey: ["getRecipesInfinite"],
+    }),
+    queryClient.invalidateQueries({
+      queryKey: ["getRecipesByPage"],
+    }),
+    queryClient.invalidateQueries({
+      queryKey: ["getRecipesCard"],
+    }),
+    queryClient.invalidateQueries({
+      queryKey: ["getSavedRecipesData"],
+    }),
+  ]);
+};
+
 export const recipesCardQuery = (
   { limit = 4 }: LimitOptions = {},
 ) =>
@@ -98,45 +118,29 @@ export const recipeFilterQuery = () =>
     gcTime: 30 * 60 * 1000,
   });
 
-export const usePostUserReview = () => {
-  return useMutation({
+export const usePostUserReview = () =>
+  useMutation({
     mutationFn: postUserReview,
     onSuccess: async (_data, variables) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["getRecipeDetailById", variables.recipeId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["getRecipesCard"],
-        }),
-      ]);
+      await invalidateRecipeReviewQueries(variables.recipeId);
     },
   });
-};
 
-export const useDeleteReview = () => {
-  return useMutation({
+export const useDeleteReview = () =>
+  useMutation({
     mutationFn: deleteReview,
-
     onSuccess: async (_data, recipeId) => {
-      await queryClient.invalidateQueries({
-        queryKey: recipeDetailQuery(recipeId).queryKey,
-      });
+      await invalidateRecipeReviewQueries(recipeId);
     },
   });
-};
 
-export const useUpdateReview = () => {
-  return useMutation({
+export const useUpdateReview = () =>
+  useMutation({
     mutationFn: updateReview,
-
     onSuccess: async (_data, variables) => {
-      await queryClient.invalidateQueries({
-        queryKey: recipeDetailQuery(variables.recipeId).queryKey,
-      });
+      await invalidateRecipeReviewQueries(variables.recipeId);
     },
   });
-};
 
 export const useSaveRecipe = () => {
   return useMutation({
@@ -191,3 +195,5 @@ export const SavedRecipesDataQuery = () =>
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
+
+  
