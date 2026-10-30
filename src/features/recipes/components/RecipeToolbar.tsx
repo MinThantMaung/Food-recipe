@@ -33,7 +33,7 @@ export function RecipeToolbar({
           className="shrink-0 text-sm text-muted-foreground"
         >
           {totalRecipes === undefined
-            ? "— recipes"
+            ? "0 recipes"
             : `${totalRecipes.toLocaleString()} ${
                 totalRecipes === 1 ? "recipe" : "recipes"
               }`}
