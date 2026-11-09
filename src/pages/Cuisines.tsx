@@ -119,7 +119,7 @@ function Cuisine() {
               title={cuisine.cuisineName}
               description={cuisine.description ?? ""}
               image={cuisine.image}
-              to={`/recipes?cuisine=${encodeURIComponent(cuisine.cuisineName)}`}
+              to={`/recipes?countryId=${encodeURIComponent(cuisine.id)}`}
             />
           ))}
         </div>
