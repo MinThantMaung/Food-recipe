@@ -40,8 +40,8 @@ export const CuisineCategories = ({ cuisines }: CuisineCardProps) => {
             key={cuisine.id}
             title={cuisine.cuisineName ?? ""}
             image={cuisine.image ?? ""}
-            to={`/recipes?cuisine=${encodeURIComponent(
-              (cuisine.cuisineName ?? "").toLowerCase()
+            to={`/recipes?countryId=${encodeURIComponent(
+              (cuisine.id ?? "")
             )}`}
           />
         ))}
