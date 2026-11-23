@@ -28,6 +28,9 @@ export const recipesCardQuery = (
   queryOptions({
     queryKey: ["getRecipesCard", { limit }],
     queryFn: () => getRecipesCard({ limit }),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
   });
 
 export const recipesPageQuery = (

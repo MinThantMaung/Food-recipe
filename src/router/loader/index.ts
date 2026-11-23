@@ -45,20 +45,30 @@ export const confirmLoader = async () => {
   return null;
 };
 
-export const homeLoader = async () => {
-  await Promise.all([
-    queryClient.query({
-      ...recipesCardQuery({ limit: 4 }),
-      staleTime: "static",
-    }),
-    queryClient.query({
-      ...cuisinesQuery({ limit: 4 }),
-      staleTime: "static",
-    }),
-    queryClient.query({
-      ...mealsQuery({ limit: 4 }),
-      staleTime: "static",
-    }),
+// export const homeLoader = async () => {
+//   await Promise.all([
+//     queryClient.query({
+//       ...recipesCardQuery({ limit: 4 }),
+//       staleTime: "static",
+//     }),
+//     queryClient.query({
+//       ...cuisinesQuery({ limit: 4 }),
+//       staleTime: "static",
+//     }),
+//     queryClient.query({
+//       ...mealsQuery({ limit: 4 }),
+//       staleTime: "static",
+//     }),
+//   ]);
+
+//   return null;
+// };
+
+export const homeLoader = () => {
+  void Promise.allSettled([
+    queryClient.query(recipesCardQuery({ limit: 4 })),
+    queryClient.query(cuisinesQuery({ limit: 4 })),
+    queryClient.query(mealsQuery({ limit: 4 })),
   ]);
 
   return null;
